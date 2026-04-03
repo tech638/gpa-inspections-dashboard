@@ -1153,11 +1153,25 @@
     // function doAssign(iid,insid){var insp=inspections.find(function(i){return i.id===iid});var ins=inspectors.find(function(i){return i.id===insid});if(insp&&ins){insp.status='assigned';insp.to=insid;ins.used++;showToast('Assigned to '+ins.name,insp.name+' &middot; '+Math.round(hav(insp.lat,insp.lng,ins.lat,ins.lng))+' miles')}selId=null;renderAll()}
     function toggleCov() { showCov = !showCov; document.getElementById('covBtn').classList.toggle('on', showCov); renderMap() }
     function renderAll() { renderStats(); renderSidebar(); renderMap(); renderOverlay() }
-    function doAssign(iid, insid) {
-      console.log()
+     function doAssign(iid, insid) {
+      const insp1 = inspections.find(i => i.id === iid);
+    const ins1 = inspectors.find(i => i.id === insid);
+
+    if (!insp1 || !ins1) return;
+
+    // 🚫 Prevent over-assignment
+    if (ins1.used >= ins1.cap) {
+              showToast("Inspector is already at full capacity ");
+      return;
+    }
+
+    // ✅ Increment BEFORE sending (this is the new value)
+    const newUsed = ins1.used + 1;
       var insp = inspections.find(function (i) {
         return i.id === iid;
       });
+
+      console.log(newUsed)
 
       var ins = inspectors.find(function (i) {
         return i.id === insid;
@@ -1165,13 +1179,14 @@
 
       if (insp && ins) {
         // 🔥 Call backend API
-        fetch(`https://twitter-server-8ibu.onrender.com/assign-inspector/${iid}`, {
+        fetch(`http://localhost:5000/assign-inspector/${iid}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             inspectorId: insid,
+            used: newUsed, 
           }),
         })
           .then((res) => res.json())
@@ -1206,7 +1221,6 @@
       selId = null;
       // renderAll();
     }
-
 
 
     // window.addEventListener('load',function(){initMap();setTimeout(function(){if(map)map.invalidateSize()},500);setTimeout(function(){if(map)map.invalidateSize()},1500)});
