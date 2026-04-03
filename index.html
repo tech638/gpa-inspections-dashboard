@@ -1,497 +1,1216 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPA Inspections — Dispatch Map</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden}
-body{font-family:'DM Sans',system-ui,sans-serif;background:#F5F4F0;color:#1C1C1A;display:flex;flex-direction:column}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPA Inspections — Dispatch Map</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
-.top{height:54px;background:#fff;border-bottom:1px solid #E0DED8;display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0}
-.logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#C4952A,#9B7A1F);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;flex-shrink:0}
-.brand{font-size:17px;font-weight:700}
-.sep{width:1px;height:28px;background:#E0DED8;flex-shrink:0}
-.stats{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
-.st{display:flex;align-items:center;gap:6px}
-.st-d{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.st-s{width:10px;height:10px;border-radius:3px;flex-shrink:0}
-.st-n{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:17px}
-.st-l{font-size:11px;color:#9C9A94}
+    html,
+    body {
+      height: 100%;
+      overflow: hidden
+    }
 
-.main{flex:1;display:flex;overflow:hidden;height:calc(100vh - 54px)}
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #F5F4F0;
+      color: #1C1C1A;
+      display: flex;
+      flex-direction: column
+    }
 
-.sb{width:380px;background:#fff;border-right:1px solid #E0DED8;display:flex;flex-direction:column;flex-shrink:0;height:100%}
-.tabs{display:flex;border-bottom:1px solid #E0DED8;flex-shrink:0}
-.tab{flex:1;padding:12px 0;text-align:center;font-size:11px;font-weight:700;color:#9C9A94;cursor:pointer;border-bottom:2.5px solid transparent;text-transform:uppercase;letter-spacing:.07em;transition:all .15s}
-.tab:hover{color:#6B6A65}
-.tab.on{color:#C4952A;border-bottom-color:#C4952A}
-.tab .b{display:inline-block;background:#DC3545;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:5px;font-family:'JetBrains Mono',monospace}
-.sb-scroll{flex:1;overflow-y:auto;padding:10px}
+    .top {
+      height: 54px;
+      background: #fff;
+      border-bottom: 1px solid #E0DED8;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 14px;
+      flex-shrink: 0
+    }
 
-.qc{background:#fff;border:1.5px solid #E8E6E1;border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .2s}
-.qc:hover{border-color:#D4C9A8;box-shadow:0 2px 12px rgba(0,0,0,.05)}
-.qc.on{border-color:#C4952A;box-shadow:0 0 0 3px rgba(196,149,42,.15)}
-.qc.urg{border-left:4px solid #DC3545}
-.qc-r1{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.qc-name{font-weight:700;font-size:14px}
-.qc-age{font-size:10px;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:5px;font-weight:600}
-.ag{background:#E8F5E9;color:#2E7D32}.ay{background:#FFF3E0;color:#E65100}.ar{background:#FCE4EC;color:#C62828}
-.qc-addr{font-size:12px;color:#6B6A65;margin-bottom:7px}
-.qc-tags{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:10px;margin-bottom:7px}
-.qc-tg{padding:3px 9px;border-radius:5px;background:#F3F2EE;color:#6B6A65;font-weight:600}
-.qc-fm{color:#9C9A94}
-.qc-note{font-size:11px;color:#9C9A94;margin-bottom:10px;font-style:italic;line-height:1.45;border-left:2px solid #E8E6E1;padding-left:10px}
-.qc-match{background:#FAF7F0;border:1px solid #EBE5D5;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.qm-star{font-size:18px;flex-shrink:0}
-.qm-info{flex:1;min-width:0}
-.qm-name{font-size:13px;font-weight:700}
-.qm-det{font-size:10px;color:#9C9A94;margin-top:2px}
-.qm-dist{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;flex-shrink:0}
-.dg{color:#2E7D32}.dy{color:#E65100}.dr{color:#C62828}
-.qc-btn{width:100%;padding:10px 0;border-radius:8px;border:none;background:linear-gradient(135deg,#C4952A,#9B7A1F);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
-.qc-btn:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 4px 12px rgba(196,149,42,.25)}
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #C4952A, #9B7A1F);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0
+    }
 
-.ic{background:#fff;border:1.5px solid #E8E6E1;border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .2s}
-.ic:hover{border-color:#D4C9A8;box-shadow:0 2px 12px rgba(0,0,0,.05)}
-.ic.on{border-color:#C4952A;box-shadow:0 0 0 3px rgba(196,149,42,.15)}
-.ic-r1{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.ic-name{font-weight:700;font-size:14px}
-.ic-sl{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;padding:3px 9px;border-radius:5px}
-.sg{background:#E8F5E9;color:#2E7D32}.sy{background:#FFF3E0;color:#E65100}.sr{background:#FCE4EC;color:#C62828}
-.ic-loc{font-size:12px;color:#6B6A65;margin-bottom:8px}
-.ic-bar{height:5px;background:#F3F2EE;border-radius:3px;overflow:hidden;margin-bottom:8px}
-.ic-fill{height:100%;border-radius:3px}
-.ic-specs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
-.ic-sp{font-size:10px;padding:3px 8px;border-radius:5px;background:rgba(196,149,42,.08);color:#A07A1E;font-weight:600}
-.ic-ct{font-size:11px;color:#9C9A94;margin-top:4px}
+    .brand {
+      font-size: 17px;
+      font-weight: 700
+    }
 
-.map-wrap{flex:1;position:relative;height:100%}
-#map{position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;background:#e5e3df}
+    .sep {
+      width: 1px;
+      height: 28px;
+      background: #E0DED8;
+      flex-shrink: 0
+    }
 
-/* INSPECTOR NAME LABELS on map */
-.ins-label{background:#fff;border:1.5px solid #C4952A;border-radius:6px;padding:3px 8px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;color:#1C1C1A;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.12);pointer-events:none}
-.ins-label::before{display:none}
-.ins-label::after{display:none}
+    .stats {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: center
+    }
 
-/* DISTANCE LABEL on lines */
-.dist-label{background:rgba(196,149,42,.95);color:#fff;border:none;border-radius:5px;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-.dist-label::before{display:none}
-.dist-label::after{display:none}
+    .st {
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
 
-/* LEGEND */
-.legend{position:absolute;bottom:20px;left:14px;z-index:1500;background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 4px 16px rgba(0,0,0,.1);border:1px solid #E0DED8;font-size:12px;line-height:1.8}
-.legend-title{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#9C9A94;margin-bottom:6px}
-.legend-row{display:flex;align-items:center;gap:10px}
-.legend-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,.1)}
-.legend-sq{width:16px;height:16px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff}
-.legend-line{width:24px;height:0;border-top:3px solid #C4952A;flex-shrink:0}
-.legend-line-dash{width:24px;height:0;border-top:2px dashed #bbb;flex-shrink:0}
+    .st-d {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
 
-/* PULSE ANIMATION for unassigned */
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(220,53,69,.5)}70%{box-shadow:0 0 0 12px rgba(220,53,69,0)}100%{box-shadow:0 0 0 0 rgba(220,53,69,0)}}
-.pulse-dot{animation:pulse 2s ease-out infinite}
+    .st-s {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0
+    }
 
-.ov{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:2000;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.16);padding:18px 22px;width:420px;max-width:calc(100% - 40px);display:none;border:1px solid #E0DED8}
-.ov.show{display:block;animation:slideUp .25s ease}
-@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.ov-x{position:absolute;top:10px;right:12px;width:28px;height:28px;border-radius:8px;border:none;background:#F3F2EE;color:#6B6A65;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.ov-x:hover{background:#E8E6E1}
-.ov-tag{font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:5px}
-.ov-name{font-size:18px;font-weight:700;margin-bottom:3px;padding-right:36px}
-.ov-addr{font-size:12px;color:#6B6A65;margin-bottom:3px}
-.ov-meta{font-size:11px;color:#9C9A94;margin-bottom:12px}
-.ov-rec{background:#FAF7F0;border:1px solid #EBE5D5;border-radius:12px;padding:14px;display:flex;align-items:center;gap:14px;margin-bottom:12px}
-.ov-badge{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,#C4952A,#9B7A1F);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.ov-ri{flex:1}
-.ov-rn{font-size:15px;font-weight:700}
-.ov-rd{font-size:11px;color:#9C9A94;margin-top:3px}
-.ov-dst{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;flex-shrink:0}
-.ov-btn{width:100%;padding:12px 0;border-radius:10px;border:none;background:linear-gradient(135deg,#C4952A,#9B7A1F);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
-.ov-btn:hover{opacity:.88}
-.ov-more{margin-top:10px;font-size:11px;color:#C4952A;font-weight:600;cursor:pointer;text-align:center}
+    .st-n {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 17px
+    }
 
-.toast{position:fixed;top:70px;right:20px;z-index:9999;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.15);padding:14px 20px;display:flex;align-items:center;gap:12px;transform:translateX(120%);transition:transform .35s cubic-bezier(.4,0,.2,1);border-left:4px solid #2E7D32}
-.toast.show{transform:translateX(0)}
+    .st-l {
+      font-size: 11px;
+      color: #9C9A94
+    }
 
-.mc{position:absolute;top:14px;right:14px;z-index:1500;display:flex;gap:6px}
-.mc-btn{padding:8px 16px;border-radius:8px;border:1px solid #E0DED8;background:#fff;color:#6B6A65;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.mc-btn:hover{border-color:#C4952A;color:#A07A1E}
-.mc-btn.on{border-color:#C4952A;background:rgba(196,149,42,.08);color:#A07A1E}
+    .main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      height: calc(100vh - 54px)
+    }
 
-.empty{padding:48px 24px;text-align:center;color:#9C9A94}
-.empty-i{font-size:32px;margin-bottom:10px}
-.empty-t{font-weight:600;font-size:14px;color:#6B6A65}
+    .sb {
+      width: 380px;
+      background: #fff;
+      border-right: 1px solid #E0DED8;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      height: 100%
+    }
 
-.leaflet-tooltip.ltt{background:#fff;color:#1C1C1A;border:1px solid #E0DED8;border-radius:10px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:11px;box-shadow:0 4px 16px rgba(0,0,0,.1);line-height:1.5}
-.leaflet-tooltip.ltt::before{border-top-color:#E0DED8}
-.leaflet-control-attribution{font-size:9px!important}
-</style>
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #E0DED8;
+      flex-shrink: 0
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px 0;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #9C9A94;
+      cursor: pointer;
+      border-bottom: 2.5px solid transparent;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      transition: all .15s
+    }
+
+    .tab:hover {
+      color: #6B6A65
+    }
+
+    .tab.on {
+      color: #C4952A;
+      border-bottom-color: #C4952A
+    }
+
+    .tab .b {
+      display: inline-block;
+      background: #DC3545;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 5px;
+      font-family: 'JetBrains Mono', monospace
+    }
+
+    .sb-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px
+    }
+
+    .qc {
+      background: #fff;
+      border: 1.5px solid #E8E6E1;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .qc:hover {
+      border-color: #D4C9A8;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .05)
+    }
+
+    .qc.on {
+      border-color: #C4952A;
+      box-shadow: 0 0 0 3px rgba(196, 149, 42, .15)
+    }
+
+    .qc.urg {
+      border-left: 4px solid #DC3545
+    }
+
+    .qc-r1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px
+    }
+
+    .qc-name {
+      font-weight: 700;
+      font-size: 14px
+    }
+
+    .qc-age {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-weight: 600
+    }
+
+    .ag {
+      background: #E8F5E9;
+      color: #2E7D32
+    }
+
+    .ay {
+      background: #FFF3E0;
+      color: #E65100
+    }
+
+    .ar {
+      background: #FCE4EC;
+      color: #C62828
+    }
+
+    .qc-addr {
+      font-size: 12px;
+      color: #6B6A65;
+      margin-bottom: 7px
+    }
+
+    .qc-tags {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 10px;
+      margin-bottom: 7px
+    }
+
+    .qc-tg {
+      padding: 3px 9px;
+      border-radius: 5px;
+      background: #F3F2EE;
+      color: #6B6A65;
+      font-weight: 600
+    }
+
+    .qc-fm {
+      color: #9C9A94
+    }
+
+    .qc-note {
+      font-size: 11px;
+      color: #9C9A94;
+      margin-bottom: 10px;
+      font-style: italic;
+      line-height: 1.45;
+      border-left: 2px solid #E8E6E1;
+      padding-left: 10px
+    }
+
+    .qc-match {
+      background: #FAF7F0;
+      border: 1px solid #EBE5D5;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px
+    }
+
+    .qm-star {
+      font-size: 18px;
+      flex-shrink: 0
+    }
+
+    .qm-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .qm-name {
+      font-size: 13px;
+      font-weight: 700
+    }
+
+    .qm-det {
+      font-size: 10px;
+      color: #9C9A94;
+      margin-top: 2px
+    }
+
+    .qm-dist {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0
+    }
+
+    .dg {
+      color: #2E7D32
+    }
+
+    .dy {
+      color: #E65100
+    }
+
+    .dr {
+      color: #C62828
+    }
+
+    .qc-btn {
+      width: 100%;
+      padding: 10px 0;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #C4952A, #9B7A1F);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s
+    }
+
+    .qc-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(196, 149, 42, .25)
+    }
+
+    .ic {
+      background: #fff;
+      border: 1.5px solid #E8E6E1;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .ic:hover {
+      border-color: #D4C9A8;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .05)
+    }
+
+    .ic.on {
+      border-color: #C4952A;
+      box-shadow: 0 0 0 3px rgba(196, 149, 42, .15)
+    }
+
+    .ic-r1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px
+    }
+
+    .ic-name {
+      font-weight: 700;
+      font-size: 14px
+    }
+
+    .ic-sl {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 9px;
+      border-radius: 5px
+    }
+
+    .sg {
+      background: #E8F5E9;
+      color: #2E7D32
+    }
+
+    .sy {
+      background: #FFF3E0;
+      color: #E65100
+    }
+
+    .sr {
+      background: #FCE4EC;
+      color: #C62828
+    }
+
+    .ic-loc {
+      font-size: 12px;
+      color: #6B6A65;
+      margin-bottom: 8px
+    }
+
+    .ic-bar {
+      height: 5px;
+      background: #F3F2EE;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px
+    }
+
+    .ic-fill {
+      height: 100%;
+      border-radius: 3px
+    }
+
+    .ic-specs {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 6px
+    }
+
+    .ic-sp {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: rgba(196, 149, 42, .08);
+      color: #A07A1E;
+      font-weight: 600
+    }
+
+    .ic-ct {
+      font-size: 11px;
+      color: #9C9A94;
+      margin-top: 4px
+    }
+
+    .map-wrap {
+      flex: 1;
+      position: relative;
+      height: 100%
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      background: #e5e3df
+    }
+
+    /* INSPECTOR NAME LABELS on map */
+    .ins-label {
+      background: #fff;
+      border: 1.5px solid #C4952A;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #1C1C1A;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+      pointer-events: none
+    }
+
+    .ins-label::before {
+      display: none
+    }
+
+    .ins-label::after {
+      display: none
+    }
+
+    /* DISTANCE LABEL on lines */
+    .dist-label {
+      background: rgba(196, 149, 42, .95);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .15)
+    }
+
+    .dist-label::before {
+      display: none
+    }
+
+    .dist-label::after {
+      display: none
+    }
+
+    /* LEGEND */
+    .legend {
+      position: absolute;
+      bottom: 20px;
+      left: 14px;
+      z-index: 1500;
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
+      border: 1px solid #E0DED8;
+      font-size: 12px;
+      line-height: 1.8
+    }
+
+    .legend-title {
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: #9C9A94;
+      margin-bottom: 6px
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid rgba(0, 0, 0, .1)
+    }
+
+    .legend-sq {
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-weight: 700;
+      color: #fff
+    }
+
+    .legend-line {
+      width: 24px;
+      height: 0;
+      border-top: 3px solid #C4952A;
+      flex-shrink: 0
+    }
+
+    .legend-line-dash {
+      width: 24px;
+      height: 0;
+      border-top: 2px dashed #bbb;
+      flex-shrink: 0
+    }
+
+    /* PULSE ANIMATION for unassigned */
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, .5)
+      }
+
+      70% {
+        box-shadow: 0 0 0 12px rgba(220, 53, 69, 0)
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0)
+      }
+    }
+
+    .pulse-dot {
+      animation: pulse 2s ease-out infinite
+    }
+
+    .ov {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .16);
+      padding: 18px 22px;
+      width: 420px;
+      max-width: calc(100% - 40px);
+      display: none;
+      border: 1px solid #E0DED8
+    }
+
+    .ov.show {
+      display: block;
+      animation: slideUp .25s ease
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0)
+      }
+    }
+
+    .ov-x {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: none;
+      background: #F3F2EE;
+      color: #6B6A65;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .ov-x:hover {
+      background: #E8E6E1
+    }
+
+    .ov-tag {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-weight: 700;
+      margin-bottom: 5px
+    }
+
+    .ov-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      padding-right: 36px
+    }
+
+    .ov-addr {
+      font-size: 12px;
+      color: #6B6A65;
+      margin-bottom: 3px
+    }
+
+    .ov-meta {
+      font-size: 11px;
+      color: #9C9A94;
+      margin-bottom: 12px
+    }
+
+    .ov-rec {
+      background: #FAF7F0;
+      border: 1px solid #EBE5D5;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px
+    }
+
+    .ov-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #C4952A, #9B7A1F);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0
+    }
+
+    .ov-ri {
+      flex: 1
+    }
+
+    .ov-rn {
+      font-size: 15px;
+      font-weight: 700
+    }
+
+    .ov-rd {
+      font-size: 11px;
+      color: #9C9A94;
+      margin-top: 3px
+    }
+
+    .ov-dst {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 20px;
+      flex-shrink: 0
+    }
+
+    .ov-btn {
+      width: 100%;
+      padding: 12px 0;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #C4952A, #9B7A1F);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit
+    }
+
+    .ov-btn:hover {
+      opacity: .88
+    }
+
+    .ov-more {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #C4952A;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center
+    }
+
+    .toast {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      z-index: 9999;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .15);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(120%);
+      transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+      border-left: 4px solid #2E7D32
+    }
+
+    .toast.show {
+      transform: translateX(0)
+    }
+
+    .mc {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 1500;
+      display: flex;
+      gap: 6px
+    }
+
+    .mc-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid #E0DED8;
+      background: #fff;
+      color: #6B6A65;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .08)
+    }
+
+    .mc-btn:hover {
+      border-color: #C4952A;
+      color: #A07A1E
+    }
+
+    .mc-btn.on {
+      border-color: #C4952A;
+      background: rgba(196, 149, 42, .08);
+      color: #A07A1E
+    }
+
+    .empty {
+      padding: 48px 24px;
+      text-align: center;
+      color: #9C9A94
+    }
+
+    .empty-i {
+      font-size: 32px;
+      margin-bottom: 10px
+    }
+
+    .empty-t {
+      font-weight: 600;
+      font-size: 14px;
+      color: #6B6A65
+    }
+
+    .leaflet-tooltip.ltt {
+      background: #fff;
+      color: #1C1C1A;
+      border: 1px solid #E0DED8;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
+      line-height: 1.5
+    }
+
+    .leaflet-tooltip.ltt::before {
+      border-top-color: #E0DED8
+    }
+
+    .leaflet-control-attribution {
+      font-size: 9px !important
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="top">
-  <div class="logo">GPA</div>
-  <div class="brand">GPA Inspections</div>
-  <div class="sep"></div>
-  <div class="stats" id="stats"></div>
-</div>
-
-<div class="main">
-  <div class="sb">
-    <div class="tabs">
-      <div class="tab on" id="t-queue" onclick="setTab('queue')">Unassigned <span class="b" id="bdg">0</span></div>
-      <div class="tab" id="t-inspectors" onclick="setTab('inspectors')">Inspectors</div>
-      <div class="tab" id="t-all" onclick="setTab('all')">All Jobs</div>
-    </div>
-    <div class="sb-scroll" id="sbBody"></div>
+  <div class="top">
+    <div class="logo">GPA</div>
+    <div class="brand">GPA Inspections</div>
+    <div class="sep"></div>
+    <div class="stats" id="stats"></div>
   </div>
-  <div class="map-wrap">
-    <div id="map"></div>
-    <div class="mc"><button class="mc-btn" id="covBtn" onclick="toggleCov()">⊙ Coverage Rings</button></div>
-    <div class="ov" id="overlay"></div>
-    <!-- LEGEND -->
-    <div class="legend">
-      <div class="legend-title">Map Legend</div>
-      <div class="legend-row"><div class="legend-dot pulse-dot" style="background:#DC3545;border-color:rgba(220,53,69,.3)"></div> Unassigned Inspection</div>
-      <div class="legend-row"><div class="legend-dot" style="background:#E8850C"></div> Assigned Inspection</div>
-      <div class="legend-row"><div class="legend-dot" style="background:#2E7D32"></div> Completed Inspection</div>
-      <div class="legend-row"><div class="legend-sq" style="background:#C4952A">MR</div> Inspector (with name label)</div>
-      <div class="legend-row"><div class="legend-line"></div> Best match connection</div>
-      <div class="legend-row"><div class="legend-line-dash"></div> Other nearby inspectors</div>
+
+  <div class="main">
+    <div class="sb">
+      <div class="tabs">
+        <div class="tab on" id="t-queue" onclick="setTab('queue')">Unassigned <span class="b" id="bdg">0</span></div>
+        <div class="tab" id="t-inspectors" onclick="setTab('inspectors')">Inspectors</div>
+        <div class="tab" id="t-all" onclick="setTab('all')">All Jobs</div>
+      </div>
+      <div class="sb-scroll" id="sbBody"></div>
+    </div>
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="mc"><button class="mc-btn" id="covBtn" onclick="toggleCov()">⊙ Coverage Rings</button></div>
+      <div class="ov" id="overlay"></div>
+      <!-- LEGEND -->
+      <div class="legend">
+        <div class="legend-title">Map Legend</div>
+        <div class="legend-row">
+          <div class="legend-dot pulse-dot" style="background:#DC3545;border-color:rgba(220,53,69,.3)"></div> Unassigned
+          Inspection
+        </div>
+        <div class="legend-row">
+          <div class="legend-dot" style="background:#E8850C"></div> Assigned Inspection
+        </div>
+        <div class="legend-row">
+          <div class="legend-dot" style="background:#2E7D32"></div> Completed Inspection
+        </div>
+        <div class="legend-row">
+          <div class="legend-sq" style="background:#C4952A">MR</div> Inspector (with name label)
+        </div>
+        <div class="legend-row">
+          <div class="legend-line"></div> Best match connection
+        </div>
+        <div class="legend-row">
+          <div class="legend-line-dash"></div> Other nearby inspectors
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="toast" id="toast"><span style="font-size:22px">✅</span><div><div id="toastTxt" style="font-size:13px;font-weight:600"></div><div id="toastSub" style="font-size:11px;color:#9C9A94;margin-top:2px"></div></div></div>
+  <div class="toast" id="toast"><span style="font-size:22px">✅</span>
+    <div>
+      <div id="toastTxt" style="font-size:13px;font-weight:600"></div>
+      <div id="toastSub" style="font-size:11px;color:#9C9A94;margin-top:2px"></div>
+    </div>
+  </div>
 
-<script>
-var inspectors = [
-  // {id:"I1",name:"Marcus Rivera",city:"Tampa",state:"FL",lat:27.9506,lng:-82.4572,cap:8,used:3,phone:"(813) 441-2290",specs:["Property Damage","Water Damage"],color:"#C4952A",radius:60},
-  // {id:"I2",name:"Dana Walsh",city:"Orlando",state:"FL",lat:28.5383,lng:-81.3792,cap:6,used:2,phone:"(407) 389-1055",specs:["Fire Damage","Smoke Damage"],color:"#3B6FC2",radius:55},
-  // {id:"I3",name:"James Okafor",city:"Jacksonville",state:"FL",lat:30.3322,lng:-81.6557,cap:8,used:5,phone:"(904) 672-8831",specs:["Storm Damage","Roof Damage","Hail"],color:"#7C5CBF",radius:70},
-  // {id:"I4",name:"Linda Castillo",city:"Atlanta",state:"GA",lat:33.749,lng:-84.388,cap:6,used:2,phone:"(404) 258-4410",specs:["Property Damage","Mold","Water Damage"],color:"#C25A3B",radius:65},
-  // {id:"I5",name:"Derek Nguyen",city:"Charlotte",state:"NC",lat:35.2271,lng:-80.8431,cap:6,used:1,phone:"(704) 993-7762",specs:["Storm Damage","Wind Damage"],color:"#2E8B6E",radius:60}
-];
+  <script>
+    var inspectors = [
+      // {id:"I1",name:"Marcus Rivera",city:"Tampa",state:"FL",lat:27.9506,lng:-82.4572,cap:8,used:3,phone:"(813) 441-2290",specs:["Property Damage","Water Damage"],color:"#C4952A",radius:60},
+      // {id:"I2",name:"Dana Walsh",city:"Orlando",state:"FL",lat:28.5383,lng:-81.3792,cap:6,used:2,phone:"(407) 389-1055",specs:["Fire Damage","Smoke Damage"],color:"#3B6FC2",radius:55},
+      // {id:"I3",name:"James Okafor",city:"Jacksonville",state:"FL",lat:30.3322,lng:-81.6557,cap:8,used:5,phone:"(904) 672-8831",specs:["Storm Damage","Roof Damage","Hail"],color:"#7C5CBF",radius:70},
+      // {id:"I4",name:"Linda Castillo",city:"Atlanta",state:"GA",lat:33.749,lng:-84.388,cap:6,used:2,phone:"(404) 258-4410",specs:["Property Damage","Mold","Water Damage"],color:"#C25A3B",radius:65},
+      // {id:"I5",name:"Derek Nguyen",city:"Charlotte",state:"NC",lat:35.2271,lng:-80.8431,cap:6,used:1,phone:"(704) 993-7762",specs:["Storm Damage","Wind Damage"],color:"#2E8B6E",radius:60}
+    ];
 
-var inspections = [
-  // {id:"GPA-2041",name:"Robert Chen",addr:"4218 Bayshore Blvd, Tampa, FL",lat:27.878,lng:-82.483,firm:"Morgan & Associates",type:"Water Damage",status:"unassigned",date:"2026-03-27",note:"Pipe burst in kitchen. Report needed by April 7."},
-  // {id:"GPA-2042",name:"Lisa Tran",addr:"1450 Gulf Blvd, Clearwater, FL",lat:27.928,lng:-82.831,firm:"Morgan & Associates",type:"Property Damage",status:"unassigned",date:"2026-03-30",note:"Hurricane roof/window damage. Claimant displaced."},
-  // {id:"GPA-2043",name:"Anthony Brown",addr:"200 Peachtree St, Atlanta, GA",lat:33.758,lng:-84.387,firm:"Clarke & Foster",type:"Mold",status:"unassigned",date:"2026-03-31",note:"Mold found during renovation. Insurance claim pending."},
-  // {id:"GPA-2044",name:"Patricia Moore",addr:"2900 N Ocean Blvd, Ft Lauderdale, FL",lat:26.163,lng:-80.106,firm:"Davis Legal Group",type:"Storm Damage",status:"unassigned",date:"2026-03-26",note:"Roof shingles torn off. Insurer DENIED claim. URGENT."},
-  // {id:"GPA-2045",name:"Steven Clark",addr:"330 W Trade St, Charlotte, NC",lat:35.228,lng:-80.849,firm:"Clarke & Foster",type:"Wind Damage",status:"unassigned",date:"2026-04-01",note:"Commercial property. Came in this morning."},
-  // {id:"GPA-2046",name:"Michelle Taylor",addr:"510 S Magnolia Ave, Orlando, FL",lat:28.533,lng:-81.368,firm:"Davis Legal Group",type:"Fire Damage",status:"unassigned",date:"2026-03-29",note:"Kitchen fire spread to living room."},
-  // {id:"GPA-2035",name:"James Wright",addr:"301 E Pine St, Orlando, FL",lat:28.541,lng:-81.373,firm:"Davis Legal Group",type:"Smoke Damage",status:"assigned",date:"2026-03-28",to:"I2",note:"Assigned to Dana Walsh."},
-  // {id:"GPA-2036",name:"Karen White",addr:"455 N Main St, Jacksonville, FL",lat:30.332,lng:-81.658,firm:"Morgan & Associates",type:"Roof Damage",status:"assigned",date:"2026-03-25",to:"I3",note:"Assigned to James Okafor."},
-  // {id:"GPA-2037",name:"David Kim",addr:"725 Peachtree Rd, Atlanta, GA",lat:33.772,lng:-84.385,firm:"Clarke & Foster",type:"Water Damage",status:"assigned",date:"2026-03-29",to:"I4",note:"Assigned to Linda Castillo."},
-  // {id:"GPA-2030",name:"Emily Davis",addr:"412 S Tryon St, Charlotte, NC",lat:35.222,lng:-80.845,firm:"Clarke & Foster",type:"Storm Damage",status:"completed",date:"2026-03-20",to:"I5",note:"Report submitted."},
-  // {id:"GPA-2031",name:"Sarah Patel",addr:"890 N Tampa St, Tampa, FL",lat:27.955,lng:-82.460,firm:"Morgan & Associates",type:"Property Damage",status:"completed",date:"2026-03-18",to:"I1",note:"Settlement pending."}
-];
+    var inspections = [
+      // {id:"GPA-2041",name:"Robert Chen",addr:"4218 Bayshore Blvd, Tampa, FL",lat:27.878,lng:-82.483,firm:"Morgan & Associates",type:"Water Damage",status:"unassigned",date:"2026-03-27",note:"Pipe burst in kitchen. Report needed by April 7."},
+      // {id:"GPA-2042",name:"Lisa Tran",addr:"1450 Gulf Blvd, Clearwater, FL",lat:27.928,lng:-82.831,firm:"Morgan & Associates",type:"Property Damage",status:"unassigned",date:"2026-03-30",note:"Hurricane roof/window damage. Claimant displaced."},
+      // {id:"GPA-2043",name:"Anthony Brown",addr:"200 Peachtree St, Atlanta, GA",lat:33.758,lng:-84.387,firm:"Clarke & Foster",type:"Mold",status:"unassigned",date:"2026-03-31",note:"Mold found during renovation. Insurance claim pending."},
+      // {id:"GPA-2044",name:"Patricia Moore",addr:"2900 N Ocean Blvd, Ft Lauderdale, FL",lat:26.163,lng:-80.106,firm:"Davis Legal Group",type:"Storm Damage",status:"unassigned",date:"2026-03-26",note:"Roof shingles torn off. Insurer DENIED claim. URGENT."},
+      // {id:"GPA-2045",name:"Steven Clark",addr:"330 W Trade St, Charlotte, NC",lat:35.228,lng:-80.849,firm:"Clarke & Foster",type:"Wind Damage",status:"unassigned",date:"2026-04-01",note:"Commercial property. Came in this morning."},
+      // {id:"GPA-2046",name:"Michelle Taylor",addr:"510 S Magnolia Ave, Orlando, FL",lat:28.533,lng:-81.368,firm:"Davis Legal Group",type:"Fire Damage",status:"unassigned",date:"2026-03-29",note:"Kitchen fire spread to living room."},
+      // {id:"GPA-2035",name:"James Wright",addr:"301 E Pine St, Orlando, FL",lat:28.541,lng:-81.373,firm:"Davis Legal Group",type:"Smoke Damage",status:"assigned",date:"2026-03-28",to:"I2",note:"Assigned to Dana Walsh."},
+      // {id:"GPA-2036",name:"Karen White",addr:"455 N Main St, Jacksonville, FL",lat:30.332,lng:-81.658,firm:"Morgan & Associates",type:"Roof Damage",status:"assigned",date:"2026-03-25",to:"I3",note:"Assigned to James Okafor."},
+      // {id:"GPA-2037",name:"David Kim",addr:"725 Peachtree Rd, Atlanta, GA",lat:33.772,lng:-84.385,firm:"Clarke & Foster",type:"Water Damage",status:"assigned",date:"2026-03-29",to:"I4",note:"Assigned to Linda Castillo."},
+      // {id:"GPA-2030",name:"Emily Davis",addr:"412 S Tryon St, Charlotte, NC",lat:35.222,lng:-80.845,firm:"Clarke & Foster",type:"Storm Damage",status:"completed",date:"2026-03-20",to:"I5",note:"Report submitted."},
+      // {id:"GPA-2031",name:"Sarah Patel",addr:"890 N Tampa St, Tampa, FL",lat:27.955,lng:-82.460,firm:"Morgan & Associates",type:"Property Damage",status:"completed",date:"2026-03-18",to:"I1",note:"Settlement pending."}
+    ];
 
-async function fetchInspectors() {
-  try {
-    const res = await fetch("https://twitter-server-8ibu.onrender.com/inspectors");
-    const data = await res.json(); 
+    async function fetchInspectors() {
+      try {
+        const res = await fetch("https://twitter-server-8ibu.onrender.com/inspectors");
+        const data = await res.json();
 
-    inspectors = data.inspectors.map((i) => ({
-      id: i.id,
-      name: i.name,
-      address: i.address || "",
-      phone: i.phone || "",
-      lat: i.lat ?? null,
-      lng: i.lng ?? null,
-      city: i.city || "",
-      state: i.state || "",
-      specs: i.specs || [],
-      color: i.color || "#C4952A",
-      radius: i.radius || 60,
-      cap: i.cap ?? 0,
-      used: i.used ?? 0,
-    }));
+        inspectors = data.inspectors.map((i) => ({
+          id: i.id,
+          name: i.name,
+          address: i.address || "",
+          phone: i.phone || "",
+          lat: i.lat ?? null,
+          lng: i.lng ?? null,
+          city: i.city || "",
+          state: i.state || "",
+          specs: i.specs || [],
+          color: i.color || "#C4952A",
+          radius: i.radius || 60,
+          cap: i.cap ?? 0,
+          used: i.used ?? 0,
+        }));
 
-    return inspectors;
+        return inspectors;
 
-    console.log(inspectors);
+        console.log(inspectors);
 
-  } catch (err) {
-    console.error("Failed to fetch inspectors:", err);
-    return []; 
-  }
-}
+      } catch (err) {
+        console.error("Failed to fetch inspectors:", err);
+        return [];
+      }
+    }
 
-// fetchInspectors();
+    // fetchInspectors();
 
-async function fetchInspections() {
-  try {
-    const res = await fetch('https://twitter-server-8ibu.onrender.com/new-inspections');
-    const data = await res.json(); 
+    async function fetchInspections() {
+      try {
+        const res = await fetch('https://twitter-server-8ibu.onrender.com/new-inspections');
+        const data = await res.json();
 
-     inspections = data.inspections.map(i => ({
-      id: i.id,
-      name: i.name,
-      addr: i.addr,
-      lat: i.lat,
-      lng: i.lng,
-      firm: i.firm,
-      type: i.type,
-      status: i.status,
-      date: i.date,
-      note: i.note,
-      to: i.assignedTo
-    }));
+        inspections = data.inspections.map(i => ({
+          id: i.id,
+          name: i.name,
+          addr: i.addr,
+          lat: i.lat,
+          lng: i.lng,
+          firm: i.firm,
+          type: i.type,
+          status: i.status,
+          date: i.date,
+          note: i.note,
+          to: i.assignedTo
+        }));
 
-    console.log(inspections); 
-    return inspections;
-  } catch (err) {
-    console.error("Failed to fetch inspections:", err);
-  }
-}
+        console.log(inspections);
+        return inspections;
+      } catch (err) {
+        console.error("Failed to fetch inspections:", err);
+      }
+    }
 
-// fetchInspections(); 
+    // fetchInspections(); 
 
-async function initializeData() {
-  console.log("🚀 Starting data initialization...");
-  await Promise.all([fetchInspectors(), fetchInspections()]);
-  console.log("📍 Data ready, initializing map...");
-  initMap();  // ✅ Only init map AFTER data is loaded
-}
+    async function initializeData() {
+      console.log("🚀 Starting data initialization...");
+      await Promise.all([fetchInspectors(), fetchInspections()]);
+      console.log("📍 Data ready, initializing map...");
+      initMap();  // ✅ Only init map AFTER data is loaded
+    }
 
-window.addEventListener('load', function(){
-  initializeData();  // ✅ Wait for both fetches, then show map
-});
-
-var activeTab='queue',selId=null,selInsId=null,showCov=false;
-var mM=[],mL=[],mC=[],mLabels=[];
-var map;
-
-function initMap(){
-  map=L.map('map',{center:[30,-82],zoom:6});
-  L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
-    attribution:'&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>, &copy; <a href="https://carto.com">CARTO</a>',maxZoom:18
-  }).addTo(map);
-  setTimeout(function(){map.invalidateSize();renderAll();
-    var pts=inspections.map(function(i){return[i.lat,i.lng]}).concat(inspectors.map(function(i){return[i.lat,i.lng]}));
-    if(pts.length)map.fitBounds(L.latLngBounds(pts).pad(.12));
-  },200);
-}
-
-function hav(a,b,c,d){var R=3959,dL=(c-a)*Math.PI/180,dG=(d-b)*Math.PI/180,x=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dG/2)*Math.sin(dG/2);return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
-function mi2m(m){return m*1609.34}
-function daysAgo(d){return Math.max(0,Math.floor((new Date('2026-04-01')-new Date(d))/864e5))}
-function ageT(d){return d===0?'Today':d===1?'Yesterday':d+' days'}
-function ageC(d){return d>=5?'ar':d>=3?'ay':'ag'}
-function distC(d){return d<30?'dg':d<70?'dy':'dr'}
-function slotC(a){return a>2?'sg':a>0?'sy':'sr'}
-function distColor(d){return d<30?'#2E7D32':d<70?'#E65100':'#C62828'}
-
-function bestM(insp){
-  return inspectors.map(function(ins){
-    var sm=ins.specs.some(function(s){return insp.type.toLowerCase().indexOf(s.split(' ')[0].toLowerCase())>=0});
-    return{id:ins.id,name:ins.name,city:ins.city,state:ins.state,lat:ins.lat,lng:ins.lng,color:ins.color,dist:hav(insp.lat,insp.lng,ins.lat,ins.lng),avail:ins.cap-ins.used,sm:sm,phone:ins.phone,specs:ins.specs,cap:ins.cap,used:ins.used,radius:ins.radius}
-  }).filter(function(i){return i.avail>0}).sort(function(a,b){return(a.dist-(a.sm?20:0))-(b.dist-(b.sm?20:0))});
-}
-
-// INSPECTOR icon: bigger square with colored border
-function insIcon(ins,sz,sel){
-  var s=sel?sz+12:sz;
-  var init=ins.name.split(' ').map(function(n){return n[0]}).join('');
-  var av=ins.cap-ins.used;
-  var bg=sel?ins.color:'#fff';
-  var fg=sel?'#fff':'#1C1C1A';
-  var bdr=sel?ins.color:ins.color;
-  var bw=sel?'3':'2';
-  var bc=av>2?'#2E7D32':av>0?'#E65100':'#C62828';
-  var glow=sel?'<rect x="0" y="0" width="'+(s+8)+'" height="'+(s+8)+'" rx="14" fill="'+ins.color+'" opacity=".2"/>':'';
-  return L.divIcon({className:'',iconSize:[s+16,s+16],iconAnchor:[(s+16)/2,(s+16)/2],
-    html:'<svg width="'+(s+16)+'" height="'+(s+16)+'" viewBox="-4 -4 '+(s+16)+' '+(s+16)+'">'+glow+'<rect x="'+((s-sz)/2)+'" y="'+((s-sz)/2)+'" width="'+sz+'" height="'+sz+'" rx="9" fill="'+bg+'" stroke="'+bdr+'" stroke-width="'+bw+'"/><text x="'+(s/2)+'" y="'+(s/2+1)+'" text-anchor="middle" dominant-baseline="middle" fill="'+fg+'" font-size="'+Math.round(sz*.36)+'" font-weight="700" font-family="DM Sans,sans-serif">'+init+'</text><circle cx="'+(s-2)+'" cy="8" r="10" fill="'+bc+'" stroke="#fff" stroke-width="2"/><text x="'+(s-2)+'" y="9" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="10" font-weight="700" font-family="JetBrains Mono,monospace">'+av+'</text></svg>'});
-}
-
-// INSPECTION icon: circle with status-specific styling
-function inspIcon(status,sz,sel){
-  var cols={unassigned:'#DC3545',assigned:'#E8850C',completed:'#2E7D32'};
-  var c=cols[status]||'#999';var s=sel?sz+12:sz;
-  var isUn=status==='unassigned';
-  // Unassigned gets an outer pulsing ring
-  var outerRing=isUn&&!sel?'<circle cx="'+(s/2)+'" cy="'+(s/2)+'" r="'+(sz/2+3)+'" fill="none" stroke="'+c+'" stroke-width="2" opacity=".3"><animate attributeName="r" from="'+(sz/2+2)+'" to="'+(sz/2+10)+'" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" from=".4" to="0" dur="2s" repeatCount="indefinite"/></circle>':'';
-  var selRing=sel?'<circle cx="'+(s/2)+'" cy="'+(s/2)+'" r="'+(s/2)+'" fill="none" stroke="'+c+'" stroke-width="2.5" opacity=".4"><animate attributeName="r" from="'+(s/2)+'" to="'+(s/2+12)+'" dur="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" from=".5" to="0" dur="1.5s" repeatCount="indefinite"/></circle>':'';
-  var bdr=sel?'stroke:#fff;stroke-width:3':'stroke:rgba(255,255,255,.8);stroke-width:2';
-  return L.divIcon({className:'',iconSize:[s+14,s+14],iconAnchor:[(s+14)/2,(s+14)/2],
-    html:'<svg width="'+(s+24)+'" height="'+(s+24)+'" viewBox="-12 -12 '+(s+24)+' '+(s+24)+'">'+outerRing+selRing+'<circle cx="'+(s/2)+'" cy="'+(s/2)+'" r="'+(sz/2)+'" fill="'+c+'" style="'+bdr+'" filter="drop-shadow(0 2px 4px rgba(0,0,0,.25))"/>'+(isUn?'<text x="'+(s/2)+'" y="'+(s/2+1)+'" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="'+(sz>14?'10':'8')+'" font-weight="700">!</text>':'')+'</svg>'});
-}
-
-function showToast(t,s){document.getElementById('toastTxt').textContent=t;document.getElementById('toastSub').textContent=s;var el=document.getElementById('toast');el.classList.add('show');setTimeout(function(){el.classList.remove('show')},3000)}
-
-function renderStats(){
-  var un=inspections.filter(function(i){return i.status==='unassigned'}).length;
-  var as=inspections.filter(function(i){return i.status==='assigned'}).length;
-  var co=inspections.filter(function(i){return i.status==='completed'}).length;
-  document.getElementById('stats').innerHTML='<div class="st"><div class="st-d" style="background:#DC3545"></div><span class="st-n">'+un+'</span><span class="st-l">Unassigned</span></div><div class="st"><div class="st-d" style="background:#E8850C"></div><span class="st-n">'+as+'</span><span class="st-l">Assigned</span></div><div class="st"><div class="st-d" style="background:#2E7D32"></div><span class="st-n">'+co+'</span><span class="st-l">Complete</span></div><div class="st"><div class="st-s" style="background:#C4952A"></div><span class="st-n">'+inspectors.length+'</span><span class="st-l">Inspectors</span></div>';
-  document.getElementById('bdg').textContent=un;
-}
-
-function setTab(t){activeTab=t;document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('on')});document.getElementById('t-'+t).classList.add('on');renderSidebar()}
-
-function renderSidebar(){
-  var b=document.getElementById('sbBody');
-  if(activeTab==='queue'){
-    var items=inspections.filter(function(i){return i.status==='unassigned'}).sort(function(a,c){return new Date(a.date)-new Date(c.date)});
-    if(!items.length){b.innerHTML='<div class="empty"><div class="empty-i">🎉</div><div class="empty-t">All caught up!</div></div>';return}
-    b.innerHTML=items.map(function(insp){
-      var d=daysAgo(insp.date),m=bestM(insp)[0],on=selId===insp.id;
-      return '<div class="qc'+(on?' on':'')+(d>=5?' urg':'')+'" onclick="clickInsp(\''+insp.id+'\')"><div class="qc-r1"><span class="qc-name">'+insp.name+'</span><span class="qc-age '+ageC(d)+'">'+ageT(d)+'</span></div><div class="qc-addr">'+insp.addr+'</div><div class="qc-tags"><span class="qc-tg">'+insp.type+'</span><span class="qc-fm">'+insp.firm+'</span></div>'+(insp.note?'<div class="qc-note">'+insp.note+'</div>':'')+(m?'<div class="qc-match"><span class="qm-star">⭐</span><div class="qm-info"><div class="qm-name">'+m.name+'</div><div class="qm-det">'+m.city+', '+m.state+' &middot; '+m.avail+' slots'+(m.sm?' &middot; Specialty ✓':'')+'</div></div><span class="qm-dist '+distC(m.dist)+'">'+Math.round(m.dist)+'mi</span></div><button class="qc-btn" onclick="event.stopPropagation();doAssign(\''+insp.id+'\',\''+m.id+'\')">Assign to '+m.name.split(' ')[0]+'</button>':'')+'</div>';
-    }).join('');
-  } else if(activeTab==='inspectors'){
-    b.innerHTML=inspectors.map(function(ins){
-      var av=ins.cap-ins.used,pct=Math.round(ins.used/ins.cap*100),on=selInsId===ins.id;
-      var bc=pct>80?'#C62828':pct>50?'#E65100':'#2E7D32';
-      var al=inspections.filter(function(i){return i.to===ins.id&&i.status==='assigned'});
-      return '<div class="ic'+(on?' on':'')+'" onclick="clickIns(\''+ins.id+'\')"><div class="ic-r1"><span class="ic-name">'+ins.name+'</span><span class="ic-sl '+slotC(av)+'">'+av+' open</span></div><div class="ic-loc">'+ins.city+', '+ins.state+' &middot; '+ins.phone+'</div><div class="ic-bar"><div class="ic-fill" style="width:'+pct+'%;background:'+bc+'"></div></div><div class="ic-specs">'+ins.specs.map(function(s){return '<span class="ic-sp">'+s+'</span>'}).join('')+'</div><div class="ic-ct">'+(al.length?al.length+' active assignment'+(al.length>1?'s':''):'<span style="color:#2E7D32">Available</span>')+'</div></div>';
-    }).join('');
-  } else {
-    var g={unassigned:[],assigned:[],completed:[]};inspections.forEach(function(i){if(g[i.status])g[i.status].push(i)});
-    b.innerHTML=['unassigned','assigned','completed'].map(function(s){
-      var cols={unassigned:'#DC3545',assigned:'#E8850C',completed:'#2E7D32'},labs={unassigned:'Unassigned',assigned:'Assigned',completed:'Completed'};
-      return '<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:'+cols[s]+';margin-bottom:8px;padding:0 4px">'+labs[s]+' ('+g[s].length+')</div>'+g[s].map(function(insp){
-        var ins=insp.to?inspectors.find(function(i){return i.id===insp.to}):null;
-        return '<div class="qc" onclick="clickInsp(\''+insp.id+'\')" style="padding:11px 14px"><div style="font-weight:700;font-size:13px;margin-bottom:3px">'+insp.name+'</div><div class="qc-addr">'+insp.addr+'</div><div class="qc-tags"><span class="qc-tg">'+insp.type+'</span>'+(ins?'<span style="color:#C4952A;font-weight:600">&rarr; '+ins.name+'</span>':'')+'</div></div>';
-      }).join('')+'</div>';
-    }).join('');
-  }
-}
-
-function clearMap(){
-  mM.forEach(function(m){map.removeLayer(m)});mM=[];
-  mL.forEach(function(l){map.removeLayer(l)});mL=[];
-  mC.forEach(function(c){map.removeLayer(c)});mC=[];
-  mLabels.forEach(function(l){map.removeLayer(l)});mLabels=[];
-}
-
-function renderMap(){
-  if(!map)return;clearMap();
-  var si=selId?inspections.find(function(i){return i.id===selId}):null;
-  var sn=selInsId?inspectors.find(function(i){return i.id===selInsId}):null;
-  var near=si?bestM(si).slice(0,3):[];
-  var nIds=near.map(function(n){return n.id});
-
-  // Coverage circles
-  if(showCov){inspectors.forEach(function(ins){var c=L.circle([ins.lat,ins.lng],{radius:mi2m(ins.radius),color:ins.color,fillColor:ins.color,fillOpacity:.06,weight:1.5,opacity:.35,dashArray:'6,6',interactive:false}).addTo(map);mC.push(c)})}
-
-  // Connection lines WITH distance labels
-  if(si){
-    near.forEach(function(ins,idx){
-      var l=L.polyline([[si.lat,si.lng],[ins.lat,ins.lng]],{color:idx===0?'#C4952A':'#BBBBBB',weight:idx===0?3.5:1.5,opacity:idx===0?.85:.35,dashArray:idx===0?null:'8,8'}).addTo(map);
-      mL.push(l);
-      // Distance label at midpoint
-      var midLat=(si.lat+ins.lat)/2;
-      var midLng=(si.lng+ins.lng)/2;
-      var dist=Math.round(ins.dist);
-      var label=L.tooltip({permanent:true,direction:'center',className:idx===0?'dist-label':'dist-label',offset:[0,0]}).setLatLng([midLat,midLng]).setContent(dist+'mi').addTo(map);
-      mLabels.push(label);
+    window.addEventListener('load', function () {
+      initializeData();  // ✅ Wait for both fetches, then show map
     });
-  }
-  if(sn){
-    inspections.filter(function(i){return i.to===sn.id&&i.status==='assigned'}).forEach(function(insp){
-      var l=L.polyline([[sn.lat,sn.lng],[insp.lat,insp.lng]],{color:sn.color,weight:2.5,opacity:.55}).addTo(map);mL.push(l);
-    });
-  }
 
-  // INSPECTOR markers + permanent name labels
-  inspectors.forEach(function(ins){
-    var isSel=selInsId===ins.id,isTop=nIds[0]===ins.id,dim=si&&nIds.indexOf(ins.id)<0;
-    var m=L.marker([ins.lat,ins.lng],{icon:insIcon(ins,isSel?42:34,isSel||isTop),zIndexOffset:isSel?2000:isTop?1500:500,opacity:dim?.25:1}).addTo(map);
-    m.on('click',function(){clickIns(ins.id)});mM.push(m);
+    var activeTab = 'queue', selId = null, selInsId = null, showCov = false;
+    var mM = [], mL = [], mC = [], mLabels = [];
+    var map;
 
-    // Permanent name label below marker
-    var av=ins.cap-ins.used;
-    var nameLabel=L.tooltip({permanent:true,direction:'bottom',className:'ins-label',offset:[0,22]}).setLatLng([ins.lat,ins.lng]).setContent(ins.name+' <span style="color:'+(av>2?'#2E7D32':av>0?'#E65100':'#C62828')+';font-size:10px">('+av+' open)</span>');
-    if(!dim) nameLabel.addTo(map);
-    mLabels.push(nameLabel);
-  });
+    function initMap() {
+      map = L.map('map', { center: [30, -82], zoom: 6 });
+      L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>, &copy; <a href="https://carto.com">CARTO</a>', maxZoom: 18
+      }).addTo(map);
+      setTimeout(function () {
+        map.invalidateSize(); renderAll();
+        var pts = inspections.map(function (i) { return [i.lat, i.lng] }).concat(inspectors.map(function (i) { return [i.lat, i.lng] }));
+        if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(.12));
+      }, 200);
+    }
 
-  // INSPECTION markers
-  inspections.forEach(function(insp){
-    var isSel=selId===insp.id,isLinked=sn&&insp.to===sn.id,dim=(sn&&!isLinked)||(si&&si.id!==insp.id);
-    var sz=isSel?20:insp.status==='unassigned'?16:12;
-    var m=L.marker([insp.lat,insp.lng],{icon:inspIcon(insp.status,sz,isSel),zIndexOffset:isSel?3000:isLinked?1800:insp.status==='unassigned'?1000:400,opacity:dim?.15:1}).addTo(map);
-    m.bindTooltip('<b>'+insp.name+'</b><br><span style="color:#6B6A65">'+insp.type+'</span><br><span style="color:#9C9A94;font-size:10px">'+insp.addr+'</span>',{direction:'top',offset:[0,-14],className:'ltt'});
-    m.on('click',function(){clickInsp(insp.id)});mM.push(m);
-  });
-}
+    function hav(a, b, c, d) { var R = 3959, dL = (c - a) * Math.PI / 180, dG = (d - b) * Math.PI / 180, x = Math.sin(dL / 2) * Math.sin(dL / 2) + Math.cos(a * Math.PI / 180) * Math.cos(c * Math.PI / 180) * Math.sin(dG / 2) * Math.sin(dG / 2); return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x)) }
+    function mi2m(m) { return m * 1609.34 }
+    function daysAgo(d) { return Math.max(0, Math.floor((new Date('2026-04-01') - new Date(d)) / 864e5)) }
+    function ageT(d) { return d === 0 ? 'Today' : d === 1 ? 'Yesterday' : d + ' days' }
+    function ageC(d) { return d >= 5 ? 'ar' : d >= 3 ? 'ay' : 'ag' }
+    function distC(d) { return d < 30 ? 'dg' : d < 70 ? 'dy' : 'dr' }
+    function slotC(a) { return a > 2 ? 'sg' : a > 0 ? 'sy' : 'sr' }
+    function distColor(d) { return d < 30 ? '#2E7D32' : d < 70 ? '#E65100' : '#C62828' }
 
-function renderOverlay(){
-  var el=document.getElementById('overlay');
-  if(!selId){el.classList.remove('show');return}
-  var insp=inspections.find(function(i){return i.id===selId});
-  if(!insp||insp.status!=='unassigned'){el.classList.remove('show');return}
-  var ms=bestM(insp),top=ms[0],d=daysAgo(insp.date);
-  el.classList.add('show');
-  el.innerHTML='<button class="ov-x" onclick="clearSel()">✕</button><div class="ov-tag" style="color:'+(d>=5?'#C62828':d>=3?'#E65100':'#DC3545')+'">'+(d>=5?'🔴 URGENT &mdash; ':'')+'UNASSIGNED &middot; '+ageT(d).toUpperCase()+'</div><div class="ov-name">'+insp.name+'</div><div class="ov-addr">'+insp.addr+'</div><div class="ov-meta">'+insp.type+' &middot; '+insp.firm+' &middot; '+insp.id+'</div>'+(top?'<div class="ov-rec"><div class="ov-badge">⭐</div><div class="ov-ri"><div class="ov-rn">'+top.name+'</div><div class="ov-rd">'+top.city+', '+top.state+' &middot; '+top.avail+' slots'+(top.sm?' &middot; Specialty match':'')+'</div></div><span class="ov-dst" style="color:'+distColor(top.dist)+'">'+Math.round(top.dist)+'mi</span></div><button class="ov-btn" onclick="doAssign(\''+insp.id+'\',\''+top.id+'\')">Assign to '+top.name+'</button>'+(ms.length>1?'<div class="ov-more" onclick="setTab(\'queue\')">See '+(ms.length-1)+' more &rarr;</div>':''):'');
-}
+    function bestM(insp) {
+      return inspectors.map(function (ins) {
+        var sm = ins.specs.some(function (s) { return insp.type.toLowerCase().indexOf(s.split(' ')[0].toLowerCase()) >= 0 });
+        return { id: ins.id, name: ins.name, city: ins.city, state: ins.state, lat: ins.lat, lng: ins.lng, color: ins.color, dist: hav(insp.lat, insp.lng, ins.lat, ins.lng), avail: ins.cap - ins.used, sm: sm, phone: ins.phone, specs: ins.specs, cap: ins.cap, used: ins.used, radius: ins.radius }
+      }).filter(function (i) { return i.avail > 0 }).sort(function (a, b) { return (a.dist - (a.sm ? 20 : 0)) - (b.dist - (b.sm ? 20 : 0)) });
+    }
 
-function clickInsp(id){selInsId=null;selId=(selId===id)?null:id;renderAll();if(selId){var i=inspections.find(function(x){return x.id===id});if(i)map.flyTo([i.lat,i.lng],Math.max(map.getZoom(),8),{duration:.5})}}
-function clickIns(id){selId=null;selInsId=(selInsId===id)?null:id;renderAll();if(selInsId){var i=inspectors.find(function(x){return x.id===id});if(i)map.flyTo([i.lat,i.lng],Math.max(map.getZoom(),8),{duration:.5})}}
-function clearSel(){selId=null;selInsId=null;renderAll()}
-// function doAssign(iid,insid){var insp=inspections.find(function(i){return i.id===iid});var ins=inspectors.find(function(i){return i.id===insid});if(insp&&ins){insp.status='assigned';insp.to=insid;ins.used++;showToast('Assigned to '+ins.name,insp.name+' &middot; '+Math.round(hav(insp.lat,insp.lng,ins.lat,ins.lng))+' miles')}selId=null;renderAll()}
-function toggleCov(){showCov=!showCov;document.getElementById('covBtn').classList.toggle('on',showCov);renderMap()}
-function renderAll(){renderStats();renderSidebar();renderMap();renderOverlay()}
-function doAssign(iid, insid) {
-  var insp = inspections.find(function (i) {
-    return i.id === iid;
-  });
+    // INSPECTOR icon: bigger square with colored border
+    function insIcon(ins, sz, sel) {
+      var s = sel ? sz + 12 : sz;
+      var init = ins.name.split(' ').map(function (n) { return n[0] }).join('');
+      var av = ins.cap - ins.used;
+      var bg = sel ? ins.color : '#fff';
+      var fg = sel ? '#fff' : '#1C1C1A';
+      var bdr = sel ? ins.color : ins.color;
+      var bw = sel ? '3' : '2';
+      var bc = av > 2 ? '#2E7D32' : av > 0 ? '#E65100' : '#C62828';
+      var glow = sel ? '<rect x="0" y="0" width="' + (s + 8) + '" height="' + (s + 8) + '" rx="14" fill="' + ins.color + '" opacity=".2"/>' : '';
+      return L.divIcon({
+        className: '', iconSize: [s + 16, s + 16], iconAnchor: [(s + 16) / 2, (s + 16) / 2],
+        html: '<svg width="' + (s + 16) + '" height="' + (s + 16) + '" viewBox="-4 -4 ' + (s + 16) + ' ' + (s + 16) + '">' + glow + '<rect x="' + ((s - sz) / 2) + '" y="' + ((s - sz) / 2) + '" width="' + sz + '" height="' + sz + '" rx="9" fill="' + bg + '" stroke="' + bdr + '" stroke-width="' + bw + '"/><text x="' + (s / 2) + '" y="' + (s / 2 + 1) + '" text-anchor="middle" dominant-baseline="middle" fill="' + fg + '" font-size="' + Math.round(sz * .36) + '" font-weight="700" font-family="DM Sans,sans-serif">' + init + '</text><circle cx="' + (s - 2) + '" cy="8" r="10" fill="' + bc + '" stroke="#fff" stroke-width="2"/><text x="' + (s - 2) + '" y="9" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="10" font-weight="700" font-family="JetBrains Mono,monospace">' + av + '</text></svg>'
+      });
+    }
 
-  var ins = inspectors.find(function (i) {
-    return i.id === insid;
-  });
+    // INSPECTION icon: circle with status-specific styling
+    function inspIcon(status, sz, sel) {
+      var cols = { unassigned: '#DC3545', assigned: '#E8850C', completed: '#2E7D32' };
+      var c = cols[status] || '#999'; var s = sel ? sz + 12 : sz;
+      var isUn = status === 'unassigned';
+      // Unassigned gets an outer pulsing ring
+      var outerRing = isUn && !sel ? '<circle cx="' + (s / 2) + '" cy="' + (s / 2) + '" r="' + (sz / 2 + 3) + '" fill="none" stroke="' + c + '" stroke-width="2" opacity=".3"><animate attributeName="r" from="' + (sz / 2 + 2) + '" to="' + (sz / 2 + 10) + '" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" from=".4" to="0" dur="2s" repeatCount="indefinite"/></circle>' : '';
+      var selRing = sel ? '<circle cx="' + (s / 2) + '" cy="' + (s / 2) + '" r="' + (s / 2) + '" fill="none" stroke="' + c + '" stroke-width="2.5" opacity=".4"><animate attributeName="r" from="' + (s / 2) + '" to="' + (s / 2 + 12) + '" dur="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" from=".5" to="0" dur="1.5s" repeatCount="indefinite"/></circle>' : '';
+      var bdr = sel ? 'stroke:#fff;stroke-width:3' : 'stroke:rgba(255,255,255,.8);stroke-width:2';
+      return L.divIcon({
+        className: '', iconSize: [s + 14, s + 14], iconAnchor: [(s + 14) / 2, (s + 14) / 2],
+        html: '<svg width="' + (s + 24) + '" height="' + (s + 24) + '" viewBox="-12 -12 ' + (s + 24) + ' ' + (s + 24) + '">' + outerRing + selRing + '<circle cx="' + (s / 2) + '" cy="' + (s / 2) + '" r="' + (sz / 2) + '" fill="' + c + '" style="' + bdr + '" filter="drop-shadow(0 2px 4px rgba(0,0,0,.25))"/>' + (isUn ? '<text x="' + (s / 2) + '" y="' + (s / 2 + 1) + '" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="' + (sz > 14 ? '10' : '8') + '" font-weight="700">!</text>' : '') + '</svg>'
+      });
+    }
 
-  if (insp && ins) {
-    // 🔥 Call backend API
-    fetch(`http://localhost:5000/assign-inspector/${iid}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        inspectorId: insid,
-      }),
-    })
-      .then((res) => res.json())
-      .then(async(data) => {
-          await Promise.all([fetchInspectors(), fetchInspections()]);
-  
-  // 🎨 Rerender UI with updated data
-  renderAll();
-        console.log("API Success:", data);
-      })
-      .catch((err) => {
-        console.error("API Error:", err);
+    function showToast(t, s) { document.getElementById('toastTxt').textContent = t; document.getElementById('toastSub').textContent = s; var el = document.getElementById('toast'); el.classList.add('show'); setTimeout(function () { el.classList.remove('show') }, 3000) }
+
+    function renderStats() {
+      var un = inspections.filter(function (i) { return i.status === 'unassigned' }).length;
+      var as = inspections.filter(function (i) { return i.status === 'assigned' }).length;
+      var co = inspections.filter(function (i) { return i.status === 'completed' }).length;
+      document.getElementById('stats').innerHTML = '<div class="st"><div class="st-d" style="background:#DC3545"></div><span class="st-n">' + un + '</span><span class="st-l">Unassigned</span></div><div class="st"><div class="st-d" style="background:#E8850C"></div><span class="st-n">' + as + '</span><span class="st-l">Assigned</span></div><div class="st"><div class="st-d" style="background:#2E7D32"></div><span class="st-n">' + co + '</span><span class="st-l">Complete</span></div><div class="st"><div class="st-s" style="background:#C4952A"></div><span class="st-n">' + inspectors.length + '</span><span class="st-l">Inspectors</span></div>';
+      document.getElementById('bdg').textContent = un;
+    }
+
+    function setTab(t) { activeTab = t; document.querySelectorAll('.tab').forEach(function (el) { el.classList.remove('on') }); document.getElementById('t-' + t).classList.add('on'); renderSidebar() }
+
+    function renderSidebar() {
+      var b = document.getElementById('sbBody');
+      if (activeTab === 'queue') {
+        var items = inspections.filter(function (i) { return i.status === 'unassigned' }).sort(function (a, c) { return new Date(a.date) - new Date(c.date) });
+        if (!items.length) { b.innerHTML = '<div class="empty"><div class="empty-i">🎉</div><div class="empty-t">All caught up!</div></div>'; return }
+        b.innerHTML = items.map(function (insp) {
+          var d = daysAgo(insp.date), m = bestM(insp)[0], on = selId === insp.id;
+          return '<div class="qc' + (on ? ' on' : '') + (d >= 5 ? ' urg' : '') + '" onclick="clickInsp(\'' + insp.id + '\')"><div class="qc-r1"><span class="qc-name">' + insp.name + '</span><span class="qc-age ' + ageC(d) + '">' + ageT(d) + '</span></div><div class="qc-addr">' + insp.addr + '</div><div class="qc-tags"><span class="qc-tg">' + insp.type + '</span><span class="qc-fm">' + insp.firm + '</span></div>' + (insp.note ? '<div class="qc-note">' + insp.note + '</div>' : '') + (m ? '<div class="qc-match"><span class="qm-star">⭐</span><div class="qm-info"><div class="qm-name">' + m.name + '</div><div class="qm-det">' + m.city + ', ' + m.state + ' &middot; ' + m.avail + ' slots' + (m.sm ? ' &middot; Specialty ✓' : '') + '</div></div><span class="qm-dist ' + distC(m.dist) + '">' + Math.round(m.dist) + 'mi</span></div><button class="qc-btn" onclick="event.stopPropagation();doAssign(\'' + insp.id + '\',\'' + m.id + '\')">Assign to ' + m.name.split(' ')[0] + '</button>' : '') + '</div>';
+        }).join('');
+      } else if (activeTab === 'inspectors') {
+        b.innerHTML = inspectors.map(function (ins) {
+          var av = ins.cap - ins.used, pct = Math.round(ins.used / ins.cap * 100), on = selInsId === ins.id;
+          var bc = pct > 80 ? '#C62828' : pct > 50 ? '#E65100' : '#2E7D32';
+          var al = inspections.filter(function (i) { return i.to === ins.id && i.status === 'assigned' });
+          return '<div class="ic' + (on ? ' on' : '') + '" onclick="clickIns(\'' + ins.id + '\')"><div class="ic-r1"><span class="ic-name">' + ins.name + '</span><span class="ic-sl ' + slotC(av) + '">' + av + ' open</span></div><div class="ic-loc">' + ins.city + ', ' + ins.state + ' &middot; ' + ins.phone + '</div><div class="ic-bar"><div class="ic-fill" style="width:' + pct + '%;background:' + bc + '"></div></div><div class="ic-specs">' + ins.specs.map(function (s) { return '<span class="ic-sp">' + s + '</span>' }).join('') + '</div><div class="ic-ct">' + (al.length ? al.length + ' active assignment' + (al.length > 1 ? 's' : '') : '<span style="color:#2E7D32">Available</span>') + '</div></div>';
+        }).join('');
+      } else {
+        var g = { unassigned: [], assigned: [], completed: [] }; inspections.forEach(function (i) { if (g[i.status]) g[i.status].push(i) });
+        b.innerHTML = ['unassigned', 'assigned', 'completed'].map(function (s) {
+          var cols = { unassigned: '#DC3545', assigned: '#E8850C', completed: '#2E7D32' }, labs = { unassigned: 'Unassigned', assigned: 'Assigned', completed: 'Completed' };
+          return '<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:' + cols[s] + ';margin-bottom:8px;padding:0 4px">' + labs[s] + ' (' + g[s].length + ')</div>' + g[s].map(function (insp) {
+            var ins = insp.to ? inspectors.find(function (i) { return i.id === insp.to }) : null;
+            return '<div class="qc" onclick="clickInsp(\'' + insp.id + '\')" style="padding:11px 14px"><div style="font-weight:700;font-size:13px;margin-bottom:3px">' + insp.name + '</div><div class="qc-addr">' + insp.addr + '</div><div class="qc-tags"><span class="qc-tg">' + insp.type + '</span>' + (ins ? '<span style="color:#C4952A;font-weight:600">&rarr; ' + ins.name + '</span>' : '') + '</div></div>';
+          }).join('') + '</div>';
+        }).join('');
+      }
+    }
+
+    function clearMap() {
+      mM.forEach(function (m) { map.removeLayer(m) }); mM = [];
+      mL.forEach(function (l) { map.removeLayer(l) }); mL = [];
+      mC.forEach(function (c) { map.removeLayer(c) }); mC = [];
+      mLabels.forEach(function (l) { map.removeLayer(l) }); mLabels = [];
+    }
+
+    function renderMap() {
+      if (!map) return; clearMap();
+      var si = selId ? inspections.find(function (i) { return i.id === selId }) : null;
+      var sn = selInsId ? inspectors.find(function (i) { return i.id === selInsId }) : null;
+      var near = si ? bestM(si).slice(0, 3) : [];
+      var nIds = near.map(function (n) { return n.id });
+
+      // Coverage circles
+      if (showCov) { inspectors.forEach(function (ins) { var c = L.circle([ins.lat, ins.lng], { radius: mi2m(ins.radius), color: ins.color, fillColor: ins.color, fillOpacity: .06, weight: 1.5, opacity: .35, dashArray: '6,6', interactive: false }).addTo(map); mC.push(c) }) }
+
+      // Connection lines WITH distance labels
+      if (si) {
+        near.forEach(function (ins, idx) {
+          var l = L.polyline([[si.lat, si.lng], [ins.lat, ins.lng]], { color: idx === 0 ? '#C4952A' : '#BBBBBB', weight: idx === 0 ? 3.5 : 1.5, opacity: idx === 0 ? .85 : .35, dashArray: idx === 0 ? null : '8,8' }).addTo(map);
+          mL.push(l);
+          // Distance label at midpoint
+          var midLat = (si.lat + ins.lat) / 2;
+          var midLng = (si.lng + ins.lng) / 2;
+          var dist = Math.round(ins.dist);
+          var label = L.tooltip({ permanent: true, direction: 'center', className: idx === 0 ? 'dist-label' : 'dist-label', offset: [0, 0] }).setLatLng([midLat, midLng]).setContent(dist + 'mi').addTo(map);
+          mLabels.push(label);
+        });
+      }
+      if (sn) {
+        inspections.filter(function (i) { return i.to === sn.id && i.status === 'assigned' }).forEach(function (insp) {
+          var l = L.polyline([[sn.lat, sn.lng], [insp.lat, insp.lng]], { color: sn.color, weight: 2.5, opacity: .55 }).addTo(map); mL.push(l);
+        });
+      }
+
+      // INSPECTOR markers + permanent name labels
+      inspectors.forEach(function (ins) {
+        var isSel = selInsId === ins.id, isTop = nIds[0] === ins.id, dim = si && nIds.indexOf(ins.id) < 0;
+        var m = L.marker([ins.lat, ins.lng], { icon: insIcon(ins, isSel ? 42 : 34, isSel || isTop), zIndexOffset: isSel ? 2000 : isTop ? 1500 : 500, opacity: dim ? .25 : 1 }).addTo(map);
+        m.on('click', function () { clickIns(ins.id) }); mM.push(m);
+
+        // Permanent name label below marker
+        var av = ins.cap - ins.used;
+        var nameLabel = L.tooltip({ permanent: true, direction: 'bottom', className: 'ins-label', offset: [0, 22] }).setLatLng([ins.lat, ins.lng]).setContent(ins.name + ' <span style="color:' + (av > 2 ? '#2E7D32' : av > 0 ? '#E65100' : '#C62828') + ';font-size:10px">(' + av + ' open)</span>');
+        if (!dim) nameLabel.addTo(map);
+        mLabels.push(nameLabel);
       });
 
-    // ✅ Update UI locally
-    insp.status = "assigned";
-    insp.to = insid;
-    ins.used++;
+      // INSPECTION markers
+      inspections.forEach(function (insp) {
+        var isSel = selId === insp.id, isLinked = sn && insp.to === sn.id, dim = (sn && !isLinked) || (si && si.id !== insp.id);
+        var sz = isSel ? 20 : insp.status === 'unassigned' ? 16 : 12;
+        var m = L.marker([insp.lat, insp.lng], { icon: inspIcon(insp.status, sz, isSel), zIndexOffset: isSel ? 3000 : isLinked ? 1800 : insp.status === 'unassigned' ? 1000 : 400, opacity: dim ? .15 : 1 }).addTo(map);
+        m.bindTooltip('<b>' + insp.name + '</b><br><span style="color:#6B6A65">' + insp.type + '</span><br><span style="color:#9C9A94;font-size:10px">' + insp.addr + '</span>', { direction: 'top', offset: [0, -14], className: 'ltt' });
+        m.on('click', function () { clickInsp(insp.id) }); mM.push(m);
+      });
+    }
 
-    showToast(
-      "Assigned to " + ins.name,
-      insp.name +
-        " &middot; " +
-        Math.round(hav(insp.lat, insp.lng, ins.lat, ins.lng)) +
-        " miles"
-    );
-  }
-  
+    function renderOverlay() {
+      var el = document.getElementById('overlay');
+      if (!selId) { el.classList.remove('show'); return }
+      var insp = inspections.find(function (i) { return i.id === selId });
+      if (!insp || insp.status !== 'unassigned') { el.classList.remove('show'); return }
+      var ms = bestM(insp), top = ms[0], d = daysAgo(insp.date);
+      el.classList.add('show');
+      el.innerHTML = '<button class="ov-x" onclick="clearSel()">✕</button><div class="ov-tag" style="color:' + (d >= 5 ? '#C62828' : d >= 3 ? '#E65100' : '#DC3545') + '">' + (d >= 5 ? '🔴 URGENT &mdash; ' : '') + 'UNASSIGNED &middot; ' + ageT(d).toUpperCase() + '</div><div class="ov-name">' + insp.name + '</div><div class="ov-addr">' + insp.addr + '</div><div class="ov-meta">' + insp.type + ' &middot; ' + insp.firm + ' &middot; ' + insp.id + '</div>' + (top ? '<div class="ov-rec"><div class="ov-badge">⭐</div><div class="ov-ri"><div class="ov-rn">' + top.name + '</div><div class="ov-rd">' + top.city + ', ' + top.state + ' &middot; ' + top.avail + ' slots' + (top.sm ? ' &middot; Specialty match' : '') + '</div></div><span class="ov-dst" style="color:' + distColor(top.dist) + '">' + Math.round(top.dist) + 'mi</span></div><button class="ov-btn" onclick="event.stopPropagation();doAssign(\'' + insp.id + '\',\'' + top.id + '\')">Assign to ' + top.name + '</button>' + (ms.length > 1 ? '<div class="ov-more" onclick="setTab(\'queue\')">See ' + (ms.length - 1) + ' more &rarr;</div>' : '') : '');
+    }
 
-  selId = null;
-  // renderAll();
-}
+    function clickInsp(id) { selInsId = null; selId = (selId === id) ? null : id; renderAll(); if (selId) { var i = inspections.find(function (x) { return x.id === id }); if (i) map.flyTo([i.lat, i.lng], Math.max(map.getZoom(), 8), { duration: .5 }) } }
+    function clickIns(id) { selId = null; selInsId = (selInsId === id) ? null : id; renderAll(); if (selInsId) { var i = inspectors.find(function (x) { return x.id === id }); if (i) map.flyTo([i.lat, i.lng], Math.max(map.getZoom(), 8), { duration: .5 }) } }
+    function clearSel() { selId = null; selInsId = null; renderAll() }
+    // function doAssign(iid,insid){var insp=inspections.find(function(i){return i.id===iid});var ins=inspectors.find(function(i){return i.id===insid});if(insp&&ins){insp.status='assigned';insp.to=insid;ins.used++;showToast('Assigned to '+ins.name,insp.name+' &middot; '+Math.round(hav(insp.lat,insp.lng,ins.lat,ins.lng))+' miles')}selId=null;renderAll()}
+    function toggleCov() { showCov = !showCov; document.getElementById('covBtn').classList.toggle('on', showCov); renderMap() }
+    function renderAll() { renderStats(); renderSidebar(); renderMap(); renderOverlay() }
+    function doAssign(iid, insid) {
+      console.log()
+      var insp = inspections.find(function (i) {
+        return i.id === iid;
+      });
+
+      var ins = inspectors.find(function (i) {
+        return i.id === insid;
+      });
+
+      if (insp && ins) {
+        // 🔥 Call backend API
+        fetch(`https://twitter-server-8ibu.onrender.com/assign-inspector/${iid}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            inspectorId: insid,
+          }),
+        })
+          .then((res) => res.json())
+          .then(async (data) => {
+            await Promise.all([fetchInspectors(), fetchInspections()]);
+
+            // 🎨 Rerender UI with updated data
+            renderAll();
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+            console.log("API Success:", data);
+          })
+          .catch((err) => {
+            console.error("API Error:", err);
+          });
+
+        // ✅ Update UI locally
+        insp.status = "assigned";
+        insp.to = insid;
+        ins.used++;
+
+        showToast(
+          "Assigned to " + ins.name,
+          insp.name +
+          " &middot; " +
+          Math.round(hav(insp.lat, insp.lng, ins.lat, ins.lng)) +
+          " miles"
+        );
+      }
+
+      selId = null;
+      // renderAll();
+    }
 
 
 
-// window.addEventListener('load',function(){initMap();setTimeout(function(){if(map)map.invalidateSize()},500);setTimeout(function(){if(map)map.invalidateSize()},1500)});
-</script>
+    // window.addEventListener('load',function(){initMap();setTimeout(function(){if(map)map.invalidateSize()},500);setTimeout(function(){if(map)map.invalidateSize()},1500)});
+  </script>
 </body>
+
 </html>
