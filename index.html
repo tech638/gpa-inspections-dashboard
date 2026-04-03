@@ -1153,7 +1153,7 @@
     // function doAssign(iid,insid){var insp=inspections.find(function(i){return i.id===iid});var ins=inspectors.find(function(i){return i.id===insid});if(insp&&ins){insp.status='assigned';insp.to=insid;ins.used++;showToast('Assigned to '+ins.name,insp.name+' &middot; '+Math.round(hav(insp.lat,insp.lng,ins.lat,ins.lng))+' miles')}selId=null;renderAll()}
     function toggleCov() { showCov = !showCov; document.getElementById('covBtn').classList.toggle('on', showCov); renderMap() }
     function renderAll() { renderStats(); renderSidebar(); renderMap(); renderOverlay() }
-     function doAssign(iid, insid) {
+    function doAssign(iid, insid) {
       const insp1 = inspections.find(i => i.id === iid);
     const ins1 = inspectors.find(i => i.id === insid);
 
@@ -1195,11 +1195,9 @@
 
             // 🎨 Rerender UI with updated data
             renderAll();
-
-                setTimeout(() => {
+            setTimeout(() => {
               window.location.reload();
             }, 1000);
-          
             console.log("API Success:", data);
           })
           .catch((err) => {
@@ -1223,6 +1221,7 @@
       selId = null;
       // renderAll();
     }
+
 
 
     // window.addEventListener('load',function(){initMap();setTimeout(function(){if(map)map.invalidateSize()},500);setTimeout(function(){if(map)map.invalidateSize()},1500)});
