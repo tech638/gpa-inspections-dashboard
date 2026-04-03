@@ -1196,7 +1196,9 @@
             // 🎨 Rerender UI with updated data
             renderAll();
 
+                setTimeout(() => {
               window.location.reload();
+            }, 1000);
           
             console.log("API Success:", data);
           })
