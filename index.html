@@ -266,6 +266,39 @@
       padding-left: 10px
     }
 
+    /* 🎨 DROPDOWN STYLING */
+    .inspector-dropdown {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #E8E6E1;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1C1C1A;
+      background: #fff;
+      cursor: pointer;
+      transition: all .2s;
+      margin-bottom: 10px;
+    }
+
+    .inspector-dropdown:hover {
+      border-color: #D4C9A8;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+    }
+
+    .inspector-dropdown:focus {
+      outline: none;
+      border-color: #C4952A;
+      box-shadow: 0 0 0 3px rgba(196, 149, 42, .15);
+    }
+
+    .inspector-dropdown option {
+      padding: 8px 12px;
+      background: #fff;
+      color: #1C1C1A;
+    }
+
     .qc-match {
       background: #FAF7F0;
       border: 1px solid #EBE5D5;
@@ -335,6 +368,12 @@
       opacity: .88;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(196, 149, 42, .25)
+    }
+
+    .qc-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .ic {
@@ -591,7 +630,9 @@
       width: 420px;
       max-width: calc(100% - 40px);
       display: none;
-      border: 1px solid #E0DED8
+      border: 1px solid #E0DED8;
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
     .ov.show {
@@ -705,6 +746,31 @@
       flex-shrink: 0
     }
 
+    .ov-dropdown {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #E8E6E1;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1C1C1A;
+      background: #fff;
+      cursor: pointer;
+      transition: all .2s;
+      margin-bottom: 12px;
+    }
+
+    .ov-dropdown:hover {
+      border-color: #D4C9A8;
+    }
+
+    .ov-dropdown:focus {
+      outline: none;
+      border-color: #C4952A;
+      box-shadow: 0 0 0 3px rgba(196, 149, 42, .15);
+    }
+
     .ov-btn {
       width: 100%;
       padding: 12px 0;
@@ -715,11 +781,17 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      font-family: inherit
+      font-family: inherit;
+      transition: all .15s;
     }
 
     .ov-btn:hover {
       opacity: .88
+    }
+
+    .ov-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
     }
 
     .ov-more {
@@ -880,31 +952,13 @@
   </div>
 
   <script>
-    var inspectors = [
-      // {id:"I1",name:"Marcus Rivera",city:"Tampa",state:"FL",lat:27.9506,lng:-82.4572,cap:8,used:3,phone:"(813) 441-2290",specs:["Property Damage","Water Damage"],color:"#C4952A",radius:60},
-      // {id:"I2",name:"Dana Walsh",city:"Orlando",state:"FL",lat:28.5383,lng:-81.3792,cap:6,used:2,phone:"(407) 389-1055",specs:["Fire Damage","Smoke Damage"],color:"#3B6FC2",radius:55},
-      // {id:"I3",name:"James Okafor",city:"Jacksonville",state:"FL",lat:30.3322,lng:-81.6557,cap:8,used:5,phone:"(904) 672-8831",specs:["Storm Damage","Roof Damage","Hail"],color:"#7C5CBF",radius:70},
-      // {id:"I4",name:"Linda Castillo",city:"Atlanta",state:"GA",lat:33.749,lng:-84.388,cap:6,used:2,phone:"(404) 258-4410",specs:["Property Damage","Mold","Water Damage"],color:"#C25A3B",radius:65},
-      // {id:"I5",name:"Derek Nguyen",city:"Charlotte",state:"NC",lat:35.2271,lng:-80.8431,cap:6,used:1,phone:"(704) 993-7762",specs:["Storm Damage","Wind Damage"],color:"#2E8B6E",radius:60}
-    ];
-
-    var inspections = [
-      // {id:"GPA-2041",name:"Robert Chen",addr:"4218 Bayshore Blvd, Tampa, FL",lat:27.878,lng:-82.483,firm:"Morgan & Associates",type:"Water Damage",status:"unassigned",date:"2026-03-27",note:"Pipe burst in kitchen. Report needed by April 7."},
-      // {id:"GPA-2042",name:"Lisa Tran",addr:"1450 Gulf Blvd, Clearwater, FL",lat:27.928,lng:-82.831,firm:"Morgan & Associates",type:"Property Damage",status:"unassigned",date:"2026-03-30",note:"Hurricane roof/window damage. Claimant displaced."},
-      // {id:"GPA-2043",name:"Anthony Brown",addr:"200 Peachtree St, Atlanta, GA",lat:33.758,lng:-84.387,firm:"Clarke & Foster",type:"Mold",status:"unassigned",date:"2026-03-31",note:"Mold found during renovation. Insurance claim pending."},
-      // {id:"GPA-2044",name:"Patricia Moore",addr:"2900 N Ocean Blvd, Ft Lauderdale, FL",lat:26.163,lng:-80.106,firm:"Davis Legal Group",type:"Storm Damage",status:"unassigned",date:"2026-03-26",note:"Roof shingles torn off. Insurer DENIED claim. URGENT."},
-      // {id:"GPA-2045",name:"Steven Clark",addr:"330 W Trade St, Charlotte, NC",lat:35.228,lng:-80.849,firm:"Clarke & Foster",type:"Wind Damage",status:"unassigned",date:"2026-04-01",note:"Commercial property. Came in this morning."},
-      // {id:"GPA-2046",name:"Michelle Taylor",addr:"510 S Magnolia Ave, Orlando, FL",lat:28.533,lng:-81.368,firm:"Davis Legal Group",type:"Fire Damage",status:"unassigned",date:"2026-03-29",note:"Kitchen fire spread to living room."},
-      // {id:"GPA-2035",name:"James Wright",addr:"301 E Pine St, Orlando, FL",lat:28.541,lng:-81.373,firm:"Davis Legal Group",type:"Smoke Damage",status:"assigned",date:"2026-03-28",to:"I2",note:"Assigned to Dana Walsh."},
-      // {id:"GPA-2036",name:"Karen White",addr:"455 N Main St, Jacksonville, FL",lat:30.332,lng:-81.658,firm:"Morgan & Associates",type:"Roof Damage",status:"assigned",date:"2026-03-25",to:"I3",note:"Assigned to James Okafor."},
-      // {id:"GPA-2037",name:"David Kim",addr:"725 Peachtree Rd, Atlanta, GA",lat:33.772,lng:-84.385,firm:"Clarke & Foster",type:"Water Damage",status:"assigned",date:"2026-03-29",to:"I4",note:"Assigned to Linda Castillo."},
-      // {id:"GPA-2030",name:"Emily Davis",addr:"412 S Tryon St, Charlotte, NC",lat:35.222,lng:-80.845,firm:"Clarke & Foster",type:"Storm Damage",status:"completed",date:"2026-03-20",to:"I5",note:"Report submitted."},
-      // {id:"GPA-2031",name:"Sarah Patel",addr:"890 N Tampa St, Tampa, FL",lat:27.955,lng:-82.460,firm:"Morgan & Associates",type:"Property Damage",status:"completed",date:"2026-03-18",to:"I1",note:"Settlement pending."}
-    ];
+    var inspectors = [];
+    var inspections = [];
+    const COMPLETED_STAGE_ID = '783997a7-b961-438a-84b8-2a0a3d6e36a8';
 
     async function fetchInspectors() {
       try {
-        const res = await fetch("https://twitter-server-8ibu.onrender.com/inspectors");
+        const res = await fetch("http://localhost:5000/inspectors");
         const data = await res.json();
 
         inspectors = data.inspectors.map((i) => ({
@@ -923,9 +977,9 @@
           used: i.used ?? 0,
         }));
 
-        return inspectors;
+        console.log(inspectors)
 
-        console.log(inspectors);
+        return inspectors;
 
       } catch (err) {
         console.error("Failed to fetch inspectors:", err);
@@ -933,11 +987,9 @@
       }
     }
 
-    // fetchInspectors();
-
     async function fetchInspections() {
       try {
-        const res = await fetch('https://twitter-server-8ibu.onrender.com/new-inspections');
+        const res = await fetch('http://localhost:5000/new-inspections');
         const data = await res.json();
 
         inspections = data.inspections.map(i => ({
@@ -962,17 +1014,15 @@
       }
     }
 
-    // fetchInspections(); 
-
     async function initializeData() {
       console.log("🚀 Starting data initialization...");
       await Promise.all([fetchInspectors(), fetchInspections()]);
       console.log("📍 Data ready, initializing map...");
-      initMap();  // ✅ Only init map AFTER data is loaded
+      initMap();
     }
 
     window.addEventListener('load', function () {
-      initializeData();  // ✅ Wait for both fetches, then show map
+      initializeData();
     });
 
     var activeTab = 'queue', selId = null, selInsId = null, showCov = false;
@@ -1004,7 +1054,7 @@
       return inspectors.map(function (ins) {
         var sm = ins.specs.some(function (s) { return insp.type.toLowerCase().indexOf(s.split(' ')[0].toLowerCase()) >= 0 });
         return { id: ins.id, name: ins.name, city: ins.city, state: ins.state, lat: ins.lat, lng: ins.lng, color: ins.color, dist: hav(insp.lat, insp.lng, ins.lat, ins.lng), avail: ins.cap - ins.used, sm: sm, phone: ins.phone, specs: ins.specs, cap: ins.cap, used: ins.used, radius: ins.radius }
-      }).filter(function (i) { return i.avail > 0 }).sort(function (a, b) { return (a.dist - (a.sm ? 20 : 0)) - (b.dist - (b.sm ? 20 : 0)) });
+      }).filter(function (i) { return i.avail > 0 }).sort(function (a, b) { return a.dist - b.dist });
     }
 
     // INSPECTOR icon: bigger square with colored border
@@ -1039,25 +1089,53 @@
       });
     }
 
-    function showToast(t, s) { document.getElementById('toastTxt').textContent = t; document.getElementById('toastSub').textContent = s; var el = document.getElementById('toast'); el.classList.add('show'); setTimeout(function () { el.classList.remove('show') }, 3000) }
+    function showToast(t, s) { 
+      document.getElementById('toastTxt').textContent = t; 
+      document.getElementById('toastSub').textContent = s; 
+      var el = document.getElementById('toast'); 
+      el.classList.add('show'); 
+      setTimeout(function () { el.classList.remove('show') }, 3000) 
+    }
 
-function renderStats() {
-  var un = inspections.filter(function (i) { return i.status === 'unassigned' }).length;
-  var as = inspections.filter(function (i) { return i.status === 'assigned' }).length;
-  var co = inspections.filter(function (i) { return i.status === 'completed' }).length;
-  var dec = inspections.filter(function (i) { return i.inspectionStatus === 'declined' }).length;
+    function renderStats() {
+      var un = inspections.filter(function (i) { return i.status === 'unassigned' }).length;
+      var as = inspections.filter(function (i) { return i.status === 'assigned' }).length;
+      var co = inspections.filter(function (i) { return i.status === 'completed' }).length;
+      var dec = inspections.filter(function (i) { return i.inspectionStatus === 'declined' }).length;
 
-  document.getElementById('stats').innerHTML = 
-    '<div class="st"><div class="st-d" style="background:#DC3545"></div><span class="st-n">' + un + '</span><span class="st-l">Unassigned</span></div>' +
-    '<div class="st"><div class="st-d" style="background:#E8850C"></div><span class="st-n">' + as + '</span><span class="st-l">Assigned</span></div>' +
-    '<div class="st"><div class="st-d" style="background:#2E7D32"></div><span class="st-n">' + co + '</span><span class="st-l">Complete</span></div>' +
-    '<div class="st"><div class="st-d" style="background:#6C757D"></div><span class="st-n">' + dec + '</span><span class="st-l">Declined</span></div>' + 
-    '<div class="st"><div class="st-s" style="background:#C4952A"></div><span class="st-n">' + inspectors.length + '</span><span class="st-l">Inspectors</span></div>';
+      document.getElementById('stats').innerHTML = 
+        '<div class="st"><div class="st-d" style="background:#DC3545"></div><span class="st-n">' + un + '</span><span class="st-l">Unassigned</span></div>' +
+        '<div class="st"><div class="st-d" style="background:#E8850C"></div><span class="st-n">' + as + '</span><span class="st-l">Assigned</span></div>' +
+        '<div class="st"><div class="st-d" style="background:#2E7D32"></div><span class="st-n">' + co + '</span><span class="st-l">Complete</span></div>' +
+        '<div class="st"><div class="st-d" style="background:#6C757D"></div><span class="st-n">' + dec + '</span><span class="st-l">Declined</span></div>' + 
+        '<div class="st"><div class="st-s" style="background:#C4952A"></div><span class="st-n">' + inspectors.length + '</span><span class="st-l">Inspectors</span></div>';
 
-  document.getElementById('bdg').textContent = un;
-}
+      document.getElementById('bdg').textContent = un;
+    }
 
     function setTab(t) { activeTab = t; document.querySelectorAll('.tab').forEach(function (el) { el.classList.remove('on') }); document.getElementById('t-' + t).classList.add('on'); renderSidebar() }
+
+    // 🎨 Update match display when dropdown changes
+    function updateMatchDisplay(inspId, selectedInsId) {
+      if (!selectedInsId) {
+        document.getElementById('match-' + inspId).innerHTML = '';
+        return;
+      }
+
+      var insp = inspections.find(function(i) { return i.id === inspId });
+      var matches = bestM(insp);
+      var selected = matches.find(function(m) { return m.id === selectedInsId });
+
+      if (selected) {
+        document.getElementById('match-' + inspId).innerHTML =
+          '<span class="qm-star">⭐</span>' +
+          '<div class="qm-info">' +
+          '<div class="qm-name">' + selected.name + '</div>' +
+          '<div class="qm-det">' + selected.city + ', ' + selected.state + ' &middot; ' + selected.avail + ' slots' + (selected.sm ? ' &middot; Specialty ✓' : '') + '</div>' +
+          '</div>' +
+          '<span class="qm-dist ' + distC(selected.dist) + '">' + Math.round(selected.dist) + 'mi</span>';
+      }
+    }
 
     function renderSidebar() {
       var b = document.getElementById('sbBody');
@@ -1065,22 +1143,109 @@ function renderStats() {
         var items = inspections.filter(function (i) { return i.status === 'unassigned' }).sort(function (a, c) { return new Date(a.date) - new Date(c.date) });
         if (!items.length) { b.innerHTML = '<div class="empty"><div class="empty-i">🎉</div><div class="empty-t">All caught up!</div></div>'; return }
         b.innerHTML = items.map(function (insp) {
-          var d = daysAgo(insp.date), m = bestM(insp)[0], on = selId === insp.id;
-          return '<div class="qc' + (on ? ' on' : '') + (d >= 5 ? ' urg' : '') + '" onclick="clickInsp(\'' + insp.id + '\')"><div class="qc-r1"><span class="qc-name">' + insp.name + '</span><span class="qc-age ' + ageC(d) + '">' + ageT(d) + '</span></div><div class="qc-addr">' + insp.addr + '</div><div class="qc-tags"><span class="qc-tg">' + insp.type + '</span><span class="qc-fm">' + insp.firm + '</span></div>' + (insp.note ? '<div class="qc-note">' + insp.note + '</div>' : '') + (m ? '<div class="qc-match"><span class="qm-star">⭐</span><div class="qm-info"><div class="qm-name">' + m.name + '</div><div class="qm-det">' + m.city + ', ' + m.state + ' &middot; ' + m.avail + ' slots' + (m.sm ? ' &middot; Specialty ✓' : '') + '</div></div><span class="qm-dist ' + distC(m.dist) + '">' + Math.round(m.dist) + 'mi</span></div><button class="qc-btn" onclick="event.stopPropagation();doAssign(\'' + insp.id + '\',\'' + m.id + '\')">Assign to ' + m.name.split(' ')[0] + '</button>' : '') + '</div>';
+          var d = daysAgo(insp.date), matches = bestM(insp), m = matches[0], on = selId === insp.id;
+          var dropdownId = 'dropdown-' + insp.id;
+          return '<div class="qc' + (on ? ' on' : '') + (d >= 5 ? ' urg' : '') + '" onclick="clickInsp(\'' + insp.id + '\')"><div class="qc-r1"><span class="qc-name">' + insp.name + '</span><span class="qc-age ' + ageC(d) + '">' + ageT(d) + '</span></div><div class="qc-addr">' + insp.addr + '</div><div class="qc-tags"><span class="qc-tg">' + insp.type + '</span><span class="qc-fm">' + insp.firm + '</span></div>' + (insp.note ? '<div class="qc-note">' + insp.note + '</div>' : '') + (matches.length > 0 ? '<div style="margin-bottom:10px"><select id="' + dropdownId + '" class="inspector-dropdown" onchange="updateMatchDisplay(\'' + insp.id + '\', this.value)" onclick="event.stopPropagation()"><option value="">-- Select Inspector --</option>' + matches.map(function(ins) { return '<option value="' + ins.id + '">' + ins.name + ' (' + Math.round(ins.dist) + 'mi, ' + ins.avail + ' slots)' + (ins.sm ? ' ✓' : '') + '</option>'; }).join('') + '</select></div><div class="qc-match" id="match-' + insp.id + '">' + (m ? '<span class="qm-star">⭐</span><div class="qm-info"><div class="qm-name">' + m.name + '</div><div class="qm-det">' + m.city + ', ' + m.state + ' &middot; ' + m.avail + ' slots' + (m.sm ? ' &middot; Specialty ✓' : '') + '</div></div><span class="qm-dist ' + distC(m.dist) + '">' + Math.round(m.dist) + 'mi</span>' : '') + '</div><button class="qc-btn" id="assign-btn-' + insp.id + '" onclick="event.stopPropagation();var sel=document.getElementById(\'' + dropdownId + '\').value; if(!sel){alert(\'Please select an inspector\'); return;} doAssign(\'' + insp.id + '\',sel)">Assign Inspector</button>' : '') + '</div>';
         }).join('');
       } else if (activeTab === 'inspectors') {
         b.innerHTML = inspectors.map(function (ins) {
-          var av = ins.cap - ins.used, pct = Math.round(ins.used / ins.cap * 100), on = selInsId === ins.id;
+          var av = ins.cap - ins.used;
+          var pct = Math.round((ins.used / ins.cap) * 100);
+          var on = selInsId === ins.id;
           var bc = pct > 80 ? '#C62828' : pct > 50 ? '#E65100' : '#2E7D32';
-          var al = inspections.filter(function (i) { return i.to === ins.id && i.status === 'assigned' });
-          return '<div class="ic' + (on ? ' on' : '') + '" onclick="clickIns(\'' + ins.id + '\')"><div class="ic-r1"><span class="ic-name">' + ins.name + '</span><span class="ic-sl ' + slotC(av) + '">' + av + ' open</span></div><div class="ic-loc">' + ins.city + ', ' + ins.state + ' &middot; ' + ins.phone + '</div><div class="ic-bar"><div class="ic-fill" style="width:' + pct + '%;background:' + bc + '"></div></div><div class="ic-specs">' + ins.specs.map(function (s) { return '<span class="ic-sp">' + s + '</span>' }).join('') + '</div><div class="ic-ct">' + (al.length ? al.length + ' active assignment' + (al.length > 1 ? 's' : '') : '<span style="color:#2E7D32">Available</span>') + '</div></div>';
+
+          var assignedJobs = inspections.filter(function (i) {
+            return i.to === ins.id && i.status === 'assigned';
+          });
+
+          return `
+            <div class="ic ${on ? 'on' : ''}" onclick="clickIns('${ins.id}')">
+              <div class="ic-r1">
+                <span class="ic-name">${ins.name}</span>
+                <span class="ic-sl ${slotC(av)}">${av} open</span>
+              </div>
+              <div class="ic-loc">
+                ${ins.city}, ${ins.state} &middot; ${ins.phone}
+              </div>
+              <div class="ic-bar">
+                <div class="ic-fill" style="width:${pct}%;background:${bc}"></div>
+              </div>
+              <div class="ic-specs">
+                ${ins.specs.map(s => `<span class="ic-sp">${s}</span>`).join('')}
+              </div>
+              <div class="ic-ct">
+                ${
+                  assignedJobs.length
+                    ? `${assignedJobs.length} active assignment${assignedJobs.length > 1 ? 's' : ''}`
+                    : '<span style="color:#2E7D32">Available</span>'
+                }
+              </div>
+              ${
+                assignedJobs.length
+                  ? `
+                <div style="margin-top:12px;border-top:1px solid #E8E6E1;padding-top:10px">
+                  ${assignedJobs.map(job => {
+                    return `
+                      <div style="
+                        background:linear-gradient(135deg,#FAF7F0,#F3F2EE);
+                        border:1px solid #EBE5D5;
+                        border-radius:10px;
+                        padding:10px 12px;
+                        margin-bottom:8px;
+                      ">
+                        <div style="
+                          display:flex;
+                          justify-content:space-between;
+                          align-items:center;
+                          margin-bottom:4px;
+                        ">
+                          <span style="font-weight:700;font-size:12px">
+                            ${job.name}
+                          </span>
+                          <button onclick="doComplete('${job.id}', '${ins.id}')" style="
+                            padding:4px 12px;
+                            background:linear-gradient(135deg, #2E7D32, #1B5E20);
+                            color:#fff;
+                            border:none;
+                            border-radius:6px;
+                            font-size:10px;
+                            font-weight:700;
+                            cursor:pointer;
+                            transition:all .15s;
+                            font-family:inherit;
+                          " onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+                            ✓ Complete
+                          </button>
+                        </div>
+                        <div style="
+                          font-size:10px;
+                          font-weight:600;
+                          color:#A07A1E;
+                          margin-bottom:4px;
+                        ">
+                          ${job.type}
+                        </div>
+                        <div style="
+                          font-size:10px;
+                          color:#6B6A65;
+                          line-height:1.4;
+                        ">
+                          ${job.addr}
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              `
+                  : ''
+              }
+            </div>
+          `;
         }).join('');
       } else {
-        // ✅ Added declined group
         var g = { unassigned: [], assigned: [], completed: [], declined: [] };
 
         inspections.forEach(function (i) {
-          // ✅ If declined → force into declined group
           if ((i.inspectionStatus || "").toLowerCase() === "declined") {
             g.declined.push(i);
           } else if (g[i.status]) {
@@ -1094,7 +1259,7 @@ function renderStats() {
             unassigned: '#DC3545',
             assigned: '#E8850C',
             completed: '#2E7D32',
-            declined: '#6B7280' // gray for declined
+            declined: '#6B7280'
           };
 
           var labs = {
@@ -1193,15 +1358,38 @@ function renderStats() {
       if (!insp || insp.status !== 'unassigned') { el.classList.remove('show'); return }
       var ms = bestM(insp), top = ms[0], d = daysAgo(insp.date);
       el.classList.add('show');
-      el.innerHTML = '<button class="ov-x" onclick="clearSel()">✕</button><div class="ov-tag" style="color:' + (d >= 5 ? '#C62828' : d >= 3 ? '#E65100' : '#DC3545') + '">' + (d >= 5 ? '🔴 URGENT &mdash; ' : '') + 'UNASSIGNED &middot; ' + ageT(d).toUpperCase() + '</div><div class="ov-name">' + insp.name + '</div><div class="ov-addr">' + insp.addr + '</div><div class="ov-meta">' + insp.type + ' &middot; ' + insp.firm + ' &middot; ' + insp.id + '</div>' + (top ? '<div class="ov-rec"><div class="ov-badge">⭐</div><div class="ov-ri"><div class="ov-rn">' + top.name + '</div><div class="ov-rd">' + top.city + ', ' + top.state + ' &middot; ' + top.avail + ' slots' + (top.sm ? ' &middot; Specialty match' : '') + '</div></div><span class="ov-dst" style="color:' + distColor(top.dist) + '">' + Math.round(top.dist) + 'mi</span></div><button class="ov-btn" onclick="event.stopPropagation();doAssign(\'' + insp.id + '\',\'' + top.id + '\')">Assign to ' + top.name + '</button>' + (ms.length > 1 ? '<div class="ov-more" onclick="setTab(\'queue\')">See ' + (ms.length - 1) + ' more &rarr;</div>' : '') : '');
+
+      var dropdownId = 'ov-dropdown-' + insp.id;
+      el.innerHTML = '<button class="ov-x" onclick="clearSel()">✕</button><div class="ov-tag" style="color:' + (d >= 5 ? '#C62828' : d >= 3 ? '#E65100' : '#DC3545') + '">' + (d >= 5 ? '🔴 URGENT &mdash; ' : '') + 'UNASSIGNED &middot; ' + ageT(d).toUpperCase() + '</div><div class="ov-name">' + insp.name + '</div><div class="ov-addr">' + insp.addr + '</div><div class="ov-meta">' + insp.type + ' &middot; ' + insp.firm + ' &middot; ' + insp.id + '</div>' + (ms.length > 0 ? '<select id="' + dropdownId + '" class="ov-dropdown" onchange="updateOverlayMatch(\'' + insp.id + '\', this.value)"><option value="">-- Select Inspector --</option>' + ms.map(function(m) { return '<option value="' + m.id + '">' + m.name + ' (' + Math.round(m.dist) + 'mi, ' + m.avail + ' slots)' + (m.sm ? ' ✓ Specialty' : '') + '</option>'; }).join('') + '</select><div class="ov-rec" id="ov-match-' + insp.id + '">' + (top ? '<div class="ov-badge">⭐</div><div class="ov-ri"><div class="ov-rn">' + top.name + '</div><div class="ov-rd">' + top.city + ', ' + top.state + ' &middot; ' + top.avail + ' slots' + (top.sm ? ' &middot; Specialty match' : '') + '</div></div><span class="ov-dst" style="color:' + distColor(top.dist) + '">' + Math.round(top.dist) + 'mi</span>' : '') + '</div><button class="ov-btn" id="ov-assign-btn-' + insp.id + '" onclick="event.stopPropagation();var sel=document.getElementById(\'' + dropdownId + '\').value; if(!sel){alert(\'Please select an inspector\'); return;} doAssign(\'' + insp.id + '\',sel)">Assign Inspector</button>' + (ms.length > 1 ? '<div class="ov-more" onclick="setTab(\'queue\')">See ' + (ms.length - 1) + ' more &rarr;</div>' : '') : '');
+    }
+
+    function updateOverlayMatch(inspId, selectedInsId) {
+      if (!selectedInsId) {
+        document.getElementById('ov-match-' + inspId).innerHTML = '';
+        return;
+      }
+
+      var insp = inspections.find(function(i) { return i.id === inspId });
+      var matches = bestM(insp);
+      var selected = matches.find(function(m) { return m.id === selectedInsId });
+
+      if (selected) {
+        document.getElementById('ov-match-' + inspId).innerHTML =
+          '<div class="ov-badge">⭐</div>' +
+          '<div class="ov-ri">' +
+          '<div class="ov-rn">' + selected.name + '</div>' +
+          '<div class="ov-rd">' + selected.city + ', ' + selected.state + ' &middot; ' + selected.avail + ' slots' + (selected.sm ? ' &middot; Specialty match' : '') + '</div>' +
+          '</div>' +
+          '<span class="ov-dst" style="color:' + distColor(selected.dist) + '">' + Math.round(selected.dist) + 'mi</span>';
+      }
     }
 
     function clickInsp(id) { selInsId = null; selId = (selId === id) ? null : id; renderAll(); if (selId) { var i = inspections.find(function (x) { return x.id === id }); if (i) map.flyTo([i.lat, i.lng], Math.max(map.getZoom(), 8), { duration: .5 }) } }
     function clickIns(id) { selId = null; selInsId = (selInsId === id) ? null : id; renderAll(); if (selInsId) { var i = inspectors.find(function (x) { return x.id === id }); if (i) map.flyTo([i.lat, i.lng], Math.max(map.getZoom(), 8), { duration: .5 }) } }
     function clearSel() { selId = null; selInsId = null; renderAll() }
-    // function doAssign(iid,insid){var insp=inspections.find(function(i){return i.id===iid});var ins=inspectors.find(function(i){return i.id===insid});if(insp&&ins){insp.status='assigned';insp.to=insid;ins.used++;showToast('Assigned to '+ins.name,insp.name+' &middot; '+Math.round(hav(insp.lat,insp.lng,ins.lat,ins.lng))+' miles')}selId=null;renderAll()}
     function toggleCov() { showCov = !showCov; document.getElementById('covBtn').classList.toggle('on', showCov); renderMap() }
     function renderAll() { renderStats(); renderSidebar(); renderMap(); renderOverlay() }
+    
     function doAssign(iid, insid) {
       const insp1 = inspections.find(i => i.id === iid);
       const ins1 = inspectors.find(i => i.id === insid);
@@ -1210,70 +1398,118 @@ function renderStats() {
 
       // 🚫 Prevent over-assignment
       if (ins1.used >= ins1.cap) {
-        showToast("Inspector is already at full capacity ");
+        showToast("Inspector is already at full capacity");
         return;
       }
 
       // ✅ Increment BEFORE sending (this is the new value)
       const newUsed = ins1.used + 1;
-      var insp = inspections.find(function (i) {
-        return i.id === iid;
-      });
 
-      console.log(newUsed)
+      console.log(newUsed);
 
-      var ins = inspectors.find(function (i) {
-        return i.id === insid;
-      });
+      // 🔥 Call backend API
+      fetch(`http://localhost:5000/assign-inspector/${iid}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inspectorId: insid,
+          used: newUsed,
+        }),
+      })
+        .then((res) => res.json())
+        .then(async (data) => {
+          await Promise.all([fetchInspectors(), fetchInspections()]);
 
-      if (insp && ins) {
-        // 🔥 Call backend API
-        fetch(`https://twitter-server-8ibu.onrender.com/assign-inspector/${iid}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            inspectorId: insid,
-            used: newUsed,
-          }),
+          // 🎨 Rerender UI with updated data
+          renderAll();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+          console.log("API Success:", data);
         })
-          .then((res) => res.json())
-          .then(async (data) => {
-            await Promise.all([fetchInspectors(), fetchInspections()]);
+        .catch((err) => {
+          console.error("API Error:", err);
+          showToast("Error assigning inspector", "Please try again");
+        });
 
-            // 🎨 Rerender UI with updated data
-            renderAll();
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-            console.log("API Success:", data);
-          })
-          .catch((err) => {
-            console.error("API Error:", err);
-          });
+      // ✅ Update UI locally
+      insp1.status = "assigned";
+      insp1.to = insid;
+      ins1.used++;
 
-        // ✅ Update UI locally
-        insp.status = "assigned";
-        insp.to = insid;
-        ins.used++;
-
-        showToast(
-          "Assigned to " + ins.name,
-          insp.name +
-          " &middot; " +
-          Math.round(hav(insp.lat, insp.lng, ins.lat, ins.lng)) +
-          " miles"
-        );
-      }
+      showToast(
+        "Assigned to " + ins1.name,
+        insp1.name +
+        " &middot; " +
+        Math.round(hav(insp1.lat, insp1.lng, ins1.lat, ins1.lng)) +
+        " miles"
+      );
 
       selId = null;
-      // renderAll();
     }
 
+    function doComplete(inspId, inspectorId) {
+      const insp = inspections.find(i => i.id === inspId);
+      const ins = inspectors.find(i => i.id === inspectorId);
 
+      if (!insp || !ins) return;
 
-    // window.addEventListener('load',function(){initMap();setTimeout(function(){if(map)map.invalidateSize()},500);setTimeout(function(){if(map)map.invalidateSize()},1500)});
+      // 🚫 Prevent decrementing below zero
+      if (ins.used <= 0) {
+        showToast("Error", "Inspector workload is already at zero");
+        return;
+      }
+
+      // ✅ Decrement the used count
+      const newUsed = ins.used - 1;
+
+      console.log("Completing inspection:", inspId, "New used count:", newUsed);
+
+      // 🔥 Call backend API to update inspection status and inspector workload
+      fetch(`http://localhost:5000/complete-inspection/${inspId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stageId: COMPLETED_STAGE_ID,
+          inspectorId: inspectorId,
+          used: newUsed,
+        }),
+      })
+        .then((res) => res.json())
+        .then(async (data) => {
+          console.log("API Success:", data);
+          
+          // Fetch updated data from backend
+          await Promise.all([fetchInspectors(), fetchInspections()]);
+
+          // 🎨 Rerender UI with updated data
+          renderAll();
+          
+          showToast(
+            "Inspection completed! ✓",
+            insp.name + " has been marked as completed"
+          );
+
+          // Reload after a brief delay
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        })
+        .catch((err) => {
+          console.error("API Error:", err);
+          showToast("Error completing inspection", "Please try again");
+        });
+
+      // ✅ Update UI locally
+      insp.status = "completed";
+      ins.used--;
+
+      selId = null;
+    }
   </script>
 </body>
 
