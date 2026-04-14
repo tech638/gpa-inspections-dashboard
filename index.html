@@ -958,7 +958,7 @@
 
     async function fetchInspectors() {
       try {
-        const res = await fetch("http://localhost:5000/inspectors");
+        const res = await fetch("https://twitter-server-8ibu.onrender.com/inspectors");
         const data = await res.json();
 
         inspectors = data.inspectors.map((i) => ({
@@ -989,7 +989,7 @@
 
     async function fetchInspections() {
       try {
-        const res = await fetch('http://localhost:5000/new-inspections');
+        const res = await fetch('https://twitter-server-8ibu.onrender.com/new-inspections');
         const data = await res.json();
 
         inspections = data.inspections.map(i => ({
@@ -1408,7 +1408,7 @@
       console.log(newUsed);
 
       // 🔥 Call backend API
-      fetch(`http://localhost:5000/assign-inspector/${iid}`, {
+      fetch(`https://twitter-server-8ibu.onrender.com/assign-inspector/${iid}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -1468,7 +1468,7 @@
       console.log("Completing inspection:", inspId, "New used count:", newUsed);
 
       // 🔥 Call backend API to update inspection status and inspector workload
-      fetch(`http://localhost:5000/complete-inspection/${inspId}`, {
+      fetch(`https://twitter-server-8ibu.onrender.com/complete-inspection/${inspId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
